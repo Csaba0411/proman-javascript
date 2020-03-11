@@ -38,13 +38,14 @@ export let dom = {
 
                 }
                 boardList +=
-                    `</div>`
+                    `</div>
+                     </div>`
             }
             boardList +=
                     `</div>
-                     </div>
-                        </section>`
+                     </section>`
         }
+        console.log(boardList);
         const outerHtml = `
             <div class="board-container">
                 ${boardList}
