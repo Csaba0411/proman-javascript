@@ -21,25 +21,30 @@ export let dom = {
                 <section class="board">
                 <div class="board-header"><span class="board-title">${board.title}</span>
                 <button class="board-add">Add Card</button>
-                <button class="board-toggle"><i class="fas fa-chevron-down"></i></button></div>
-                <div class="board-columns">
-                    <div class="board-column">
-                        <div class="board-column-title">${board['status1']}</div>
-                    </div>
-                    <div class="board-column">
-                        <div class="board-column-title">${board['status2']}</div>
-                    </div>
-                    <div class="board-column">
-                        <div class="board-column-title">${board['status3']}</div>
-                    </div>
-                    <div class="board-column">
-                        <div class="board-column-title">${board['status4']}</div>
-                    </div>
+                <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                 </div>
-                </section>
-            `;
-        }
+                <div class="board-columns">`;
+            for (let stat of board['status']) {
+                boardList +=
+                    `<div class="board-column">
+                        <div class="board-column-title">${stat}</div>
+                        <div class="board-column-content">`;
+                for (let card of board[stat]) {
+                    boardList +=
+                        `<div class="card">
+                            <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
+                            <div class="card-title">${card}</div>
+                        </div>`
 
+                }
+                boardList +=
+                    `</div>`
+            }
+            boardList +=
+                    `</div>
+                     </div>
+                        </section>`
+        }
         const outerHtml = `
             <div class="board-container">
                 ${boardList}
