@@ -12,7 +12,14 @@ def get_card_status(status_id):
 
 
 def get_boards():
-    return persistence.collect_all_board()
+    statuses = persistence.get_statuses()
+    all_board = persistence.collect_all_board()
+    for board in all_board:
+        status_number = 1
+        for status in statuses:
+            board[f'status{status_number}'] = status['status']
+            status_number += 1
+    return all_board
 
 
 def get_cards_for_board(board_id):
