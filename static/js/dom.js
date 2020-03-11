@@ -23,6 +23,18 @@ export let dom = {
                 <button class="board-add">Add Card</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down"></i></button></div>
                 <div class="board-columns">
+                    <div class="board-column">
+                        <div class="board-column-title">${board['status1']}</div>
+                    </div>
+                    <div class="board-column">
+                        <div class="board-column-title">${board['status2']}</div>
+                    </div>
+                    <div class="board-column">
+                        <div class="board-column-title">${board['status3']}</div>
+                    </div>
+                    <div class="board-column">
+                        <div class="board-column-title">${board['status4']}</div>
+                    </div>
                 </div>
                 </section>
             `;
