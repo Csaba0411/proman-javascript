@@ -10,14 +10,14 @@ def collect_all_board(cursor):
     return cursor.fetchall()
 
 
-@database_common.connection_handler
-def get_cards_by_board_id(cursor, board_id):
-    cursor.execute("""
-    SELECT title
-    FROM cards
-    WHERE board_id = %(board_id)s
-    """, {'board_id': board_id})
-    return cursor.fetchall()
+# @database_common.connection_handler
+# def get_cards_by_board_id(cursor, board_id):
+#     cursor.execute("""
+#     SELECT title
+#     FROM cards
+#     WHERE board_id = %(board_id)s
+#     """, {'board_id': board_id})
+#     return cursor.fetchall()
 
 
 @database_common.connection_handler
@@ -27,6 +27,37 @@ def get_statuses(cursor):
     FROM statuses;
     """)
     return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_all_cards_status_id_for_a_board(cursor, board_id):
+    cursor.execute("""
+    SELECT DISTINCT status_id FROM cards
+    WHERE board_id = %(board_id)s
+    ORDER BY status_id
+    """, {'board_id': board_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_card_status_board(cursor, board_id):
+    cursor.execute("""
+    SELECT cards.title as card, s.title as status, b.title as board
+    FROM cards
+    JOIN statuses s on cards.status_id = s.id
+    JOIN board b on cards.board_id = b.id
+    WHERE board_id = %(board_id)s
+    """, {'board_id': board_id})
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_status_title_by_id(cursor, card_id):
+    cursor.execute("""
+    SELECT title FROM statuses
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id})
+    return cursor.fetchone()
 
 
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
