@@ -23,9 +23,10 @@ def get_cards_by_board_id(cursor, board_id):
 @database_common.connection_handler
 def get_statuses(cursor):
     cursor.execute("""
-    SELECT title
+    SELECT title status
     FROM statuses;
     """)
+    return cursor.fetchall()
 
 
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
