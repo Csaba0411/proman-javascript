@@ -127,3 +127,9 @@ section.board{
 .card-title{
     padding-right: 16px;
 }
+
+#registration{
+    position: absolute;
+    top: 3%;
+    right: 3%;
+}
