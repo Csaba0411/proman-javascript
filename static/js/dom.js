@@ -21,7 +21,7 @@ export let dom = {
                 <section class="board">
                 <div class="board-header"><button class="board-title">${board.title}</button>
                 <button class="board-add">Add Card</button>
-                <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
+                <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
                 </div>
                 <div class="board-columns">`;
             for (let stat of board['status']) {
@@ -53,6 +53,7 @@ export let dom = {
         let boardsContainer = document.querySelector('#boards');
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
         renameFunction();
+        hideShowColumn()
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -75,13 +76,12 @@ function renameFunction() {
                 `<button id="small-close" type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>`;
             let saveButton = document.querySelector('#small-close');
             saveButton.addEventListener('click', function () {
-                console.log(saveButton);
                 modal.style.display = "none";
                 let newName = document.getElementById('textarea').value;
                 let data = {'oldboardname': name.innerHTML, 'newboardname': newName};
                 dataHandler.sendNewName(data, function (brandNewName) {
                     console.log(brandNewName);
-                    name.innerHTML = brandNewName.newname
+                    name.innerHTML = brandNewName.newName;
                     document.querySelector('.modal-footer').innerHTML = '';
                     document.getElementById('textarea').value = '';
                 })
@@ -97,3 +97,19 @@ function renameFunction() {
         })
     }
 }
+
+let hideShowColumn = function () {
+    let boards = document.querySelectorAll('.board');
+
+    for (let board of boards) {
+        let toggleButton = board.querySelector('.toggle-button');
+        toggleButton.addEventListener('click', function () {
+            let columns = board.querySelector('.board-columns');
+            if (columns.classList.contains('hide-element')) {
+                columns.classList.remove('hide-element')
+            } else {
+                columns.classList.add('hide-element')
+            }
+        })
+    }
+};
