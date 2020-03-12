@@ -127,6 +127,19 @@ def add_new_status(cursor, status_name):
     VALUES (%(status_name)s)
     """, {'status_name': status_name})
 
+
+@database_common.connection_handler
+def add_card_by_board_and_status(cursor, board_name, status_id):
+    cursor.execute("""INSERT INTO cards(board_id, title, status_id)
+    VALUES (%(board_name)s, 'New card', %(status_id)s)""", {'board_name': board_name, 'status_id': status_id})
+
+
+@database_common.connection_handler
+def get_status_by_name(cursor, name):
+    cursor.execute('''SELECT id FROM statuses
+    WHERE title = %(name)s''', {'name': name})
+    return cursor.fetchone()
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
