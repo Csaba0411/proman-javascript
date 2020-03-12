@@ -18,6 +18,7 @@
           href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
     <link rel="icon" type="image/png" sizes="16x16"
           href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
@@ -45,5 +46,34 @@
 <!-- my changes -->
 <h1>ProMan</h1>
 <div id="boards"></div>
+{#   modal#}
+<div id="small-modal" class="modal">
+    <div tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div id="small-modal-header" class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="small-modal-table" class="table table-bordered">
+                        <thead class="thead-light">
+                        <tr id="table-head">
+                        </tr>
+                        </thead>
+                        <tbody id="small-body">
+                        <textarea id="textarea" placeholder="Add new name" cols="15"></textarea>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
