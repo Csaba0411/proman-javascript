@@ -19,7 +19,7 @@ export let dom = {
         for (let board of boards) {
             boardList += `
                 <section class="board">
-                <div class="board-header"><span class="board-title">${board.title}</span>
+                <div class="board-header"><button class="board-title">${board.title}</button>
                 <button class="board-add">Add Card</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                 </div>
@@ -45,7 +45,6 @@ export let dom = {
                     `</div>
                      </section>`
         }
-        console.log(boardList);
         const outerHtml = `
             <div class="board-container">
                 ${boardList}
@@ -53,6 +52,7 @@ export let dom = {
         `;
         let boardsContainer = document.querySelector('#boards');
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
+        renameFunction();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -63,3 +63,37 @@ export let dom = {
     },
     // here comes more features
 };
+function renameFunction() {
+    let rename = document.querySelectorAll('.board-title');
+    for (let name of rename) {
+        name.addEventListener('click', function () {
+            let boardName = document.querySelector('.modal-title');
+            let modal = document.querySelector('#small-modal');
+            boardName.innerHTML = name.innerHTML;
+            modal.style.display = "block";
+            document.querySelector('.modal-footer').innerHTML =
+                `<button id="small-close" type="button" class="btn btn-secondary" data-dismiss="modal">Save</button>`;
+            let saveButton = document.querySelector('#small-close');
+            saveButton.addEventListener('click', function () {
+                console.log(saveButton);
+                modal.style.display = "none";
+                let newName = document.getElementById('textarea').value;
+                let data = {'oldboardname': name.innerHTML, 'newboardname': newName};
+                dataHandler.sendNewName(data, function (brandNewName) {
+                    console.log(brandNewName);
+                    name.innerHTML = brandNewName.newname
+                    document.querySelector('.modal-footer').innerHTML = '';
+                    document.getElementById('textarea').value = '';
+                })
+
+            });
+            let crossButton = document.querySelector('.close');
+            crossButton.addEventListener('click', function () {
+                modal.style.display = "none";
+                document.querySelector('.modal-footer').innerHTML = '';
+                document.getElementById('textarea').value = '';
+            })
+
+        })
+    }
+}
