@@ -95,9 +95,10 @@ def saving_new_board():
     return persistence.save_new_board()
 
 
-def add_new_status(status_name):
+def add_new_status(board_name, status_name):
     persistence.add_new_status(status_name)
-
+    status_id = persistence.get_status_by_name(status_name)
+    persistence.add_card_by_board_and_status(board_name, status_id['id'])
 
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
