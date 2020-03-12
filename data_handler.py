@@ -103,6 +103,10 @@ def delete_board(board_id):
     persistence.delete_board(board_id)
 
 
+def saving_new_card(board_id):
+    return persistence.save_new_card(board_id)
+
+
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
 #     all_cards = persistence.get_cards()
