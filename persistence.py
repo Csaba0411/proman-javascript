@@ -111,6 +111,16 @@ def get_board_id_by_name(cursor, oldname):
                    {'oldname': oldname})
     return cursor.fetchone()
 
+
+@database_common.connection_handler
+def save_new_board(cursor):
+    cursor.execute("""
+    INSERT INTO board (title)
+    VALUES ('New Board'); 
+    """)
+    return None
+
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
