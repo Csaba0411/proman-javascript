@@ -76,6 +76,12 @@ def save_new_board():
         return data_handler.saving_new_board()
 
 
+@app.route('/new-status/<status_name>')
+@json_response
+def new_status(status_name):
+    data_handler.add_new_status(status_name)
+
+
 def main():
     app.run(debug=True)
 
