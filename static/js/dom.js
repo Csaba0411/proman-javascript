@@ -81,7 +81,7 @@ function renameFunction() {
                 let data = {'oldboardname': name.innerHTML, 'newboardname': newName};
                 dataHandler.sendNewName(data, function (brandNewName) {
                     console.log(brandNewName);
-                    name.innerHTML = brandNewName.newName;
+                    name.innerHTML = brandNewName.newname;
                     document.querySelector('.modal-footer').innerHTML = '';
                     document.getElementById('textarea').value = '';
                 })
