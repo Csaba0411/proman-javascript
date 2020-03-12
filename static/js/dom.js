@@ -73,8 +73,8 @@ export let dom = {
             dataHandler.addBoard(data, function () {
                 console.log('testing')
             });
+            renameFunction();
         });
-        renameFunction();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
