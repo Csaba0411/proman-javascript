@@ -145,6 +145,11 @@ def save_new_card(cursor, board_id):
         """, {'board_id': board_id})
     return None
 
+
+@database_common.connection_handler
+def add_default_status_to_newboard(cursor, board_id, counter):
+    cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
+    VALUES (%s, 'New card', %s, false)""", (board_id, counter))
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
