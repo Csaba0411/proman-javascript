@@ -6314,7 +6314,11 @@ a.close.disabled {
 }
 
 .toast-body {
-    padding: 0.75rem
+    padding: 0.75rem;
+}
+
+textarea {
+    font-size: 25px;
 }
 
 .modal-open {
@@ -6330,11 +6334,11 @@ a.close.disabled {
 
     position: fixed;
     top: 5%;
-    left: 20%;
+    left: 40%;
     bottom: 5%;
     z-index: 1050;
     display: none;
-    width: 60%;
+    width: 15%;
     height: 100%;
     overflow: hidden;
     outline: 0
