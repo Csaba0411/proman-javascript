@@ -67,6 +67,7 @@ export let dom = {
         addColumn();
         deleteBoard();
 
+
         document.getElementById("plus-sign").addEventListener("click", function () {
             dataHandler.getBoards(function (boards) {
                 let board_id = 0;
@@ -80,8 +81,27 @@ export let dom = {
                     <div class="board-header"><button class="board-title">New Board</button>
                     <button class="board-add" data-board-id="${board_id}">Add Card</button>
                     <button class="board-add add-status" data-board-id="${board_id}">Add status</button>
-                    <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
-                    </div></section>`;
+<!--                    <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>-->
+                    </div>
+                    <div class="board-columns">`;
+                for (let stats of ['new', 'in progress', 'testing', 'done']) {
+                    newBoard +=
+                        `<div class="board-column">
+                         <div class="board-column-title">${stats}</div>
+                         <div class="board-column-content">`;
+                    newBoard +=
+                        `<div class="card">
+                         <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
+                         <div class="card-title">New card</div>
+                         </div>`
+                    newBoard +=
+                        `</div>
+                        </div>`
+                }
+                newBoard +=
+                    `</div>
+                    </section>`;
+
 
                 let boardsContainer = document.querySelector('.board-container');
                 boardsContainer.insertAdjacentHTML("beforeend", newBoard);
@@ -96,27 +116,27 @@ export let dom = {
             });
         });
 
-    let addCardButtons = document.getElementsByClassName("board-add");
-        for (let button of addCardButtons){
+        let addCardButtons = document.getElementsByClassName("board-add");
+        for (let button of addCardButtons) {
             button.addEventListener("click", function () {
-            let newCard =
-                `<div class="card">
+                let newCard =
+                    `<div class="card">
                             <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
                             <div class="card-title">New Card</div>
                         </div>`;
 
-            let board_id = this.dataset.boardId;
-            let allCardContainer = document.getElementsByClassName('column-for-new-cards');
-            for (let cardContainer of allCardContainer) {
-                if (cardContainer.dataset.boardId === board_id) {
-                    cardContainer.insertAdjacentHTML("beforeend", newCard);
+                let board_id = this.dataset.boardId;
+                let allCardContainer = document.getElementsByClassName('column-for-new-cards');
+                for (let cardContainer of allCardContainer) {
+                    if (cardContainer.dataset.boardId === board_id) {
+                        cardContainer.insertAdjacentHTML("beforeend", newCard);
+                    }
                 }
-            }
 
-            dataHandler.addCard(board_id, function () {
-                console.log('testing')
+                dataHandler.addCard(board_id, function () {
+                    console.log('testing')
+                });
             });
-        });
         }
     },
     loadCards: function (boardId) {
@@ -178,6 +198,8 @@ let hideShowColumn = function () {
         })
     }
 };
+
+
 
 let addColumn = function () {
     let statusButton = document.querySelectorAll('.add-status');
