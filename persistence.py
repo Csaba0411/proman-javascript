@@ -129,7 +129,6 @@ def add_new_status(cursor, status_name):
 
 
 @database_common.connection_handler
-<<<<<<< HEAD
 def add_card_by_board_and_status(cursor, board_name, status_id):
     cursor.execute("""INSERT INTO cards(board_id, title, status_id)
     VALUES (%(board_name)s, 'New card', %(status_id)s)""", {'board_name': board_name, 'status_id': status_id})
@@ -141,7 +140,7 @@ def get_status_by_name(cursor, name):
     WHERE title = %(name)s''', {'name': name})
     return cursor.fetchone()
 
-=======
+
 def delete_board(cursor, board_id):
     cursor.execute("""
     DELETE
@@ -163,6 +162,7 @@ def save_new_card(cursor, board_id):
 def add_default_status_to_newboard(cursor, board_id, counter):
     cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
     VALUES (%s, 'New card', %s, false)""", (board_id, counter))
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
