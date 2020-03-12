@@ -72,14 +72,29 @@ def rename_board():
 @app.route("/save-new-board", methods=['POST', 'GET'])
 @json_response
 def save_new_board():
+    return data_handler.saving_new_board()
+
+
+
+
+@app.route("/save-new-card", methods=['POST', 'GET'])
+@json_response
+def save_new_card():
     if request.method == 'POST':
-        return data_handler.saving_new_board()
+        board_id = request.get_json()
+        return data_handler.saving_new_card(board_id)
 
 
 @app.route('/new-status/<board_name>/<status_name>')
 @json_response
 def new_status(board_name, status_name):
     data_handler.add_new_status(board_name, status_name)
+
+
+@app.route('/delete/<board_id>')
+@json_response
+def delete_board(board_id):
+    data_handler.delete_board(board_id)
 
 
 def main():

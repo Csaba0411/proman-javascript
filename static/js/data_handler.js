@@ -62,6 +62,12 @@ export let dataHandler = {
                 callback(response);
         });
     },
+    addCard: function (data,callback) {
+        this._api_post('/save-new-card',data,(response) =>{
+             this._data = response;
+                callback(response);
+        });
+    },
     getStatus: function (statusId, callback) {
         // the status is retrieved and then the callback function is called with the status
     },
