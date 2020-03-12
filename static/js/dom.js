@@ -120,7 +120,7 @@ let hideShowColumn = function () {
     let boards = document.querySelectorAll('.board');
 
     for (let board of boards) {
-        let toggleButton = board.querySelector('.toggle-button');
+        let toggleButton = board.querySelector('.board-toggle');
         toggleButton.addEventListener('click', function () {
             let columns = board.querySelector('.board-columns');
             if (columns.classList.contains('hide-element')) {
