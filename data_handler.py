@@ -1,4 +1,53 @@
 import persistence
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+from datetime import datetime
+import bcrypt
+
+
+def hash_password(plain_text_password):
+    # By using bcrypt, the salt is saved into the hash itself
+    hashed_bytes = bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt())
+    return hashed_bytes.decode('utf-8')
+
+
+def verify_password(plain_text_password, hashed_password):
+    hashed_bytes_password = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(plain_text_password.encode('utf-8'), hashed_bytes_password)
+
+
+def comparing_passwords(passwords):
+    password = passwords['password']
+    password_again = passwords['password_again']
+    return password == password_again
+
+
+def comparing_new_user_name(registration_details):
+    all_users = persistence.get_users_data()
+    for item in all_users:
+        if item['name'] == registration_details['username']:
+            return False
+    return True
+
+
+def adding_registration_data(registration_data):
+    dt = datetime.now()
+    hashed_password = hash_password(registration_data["password"])
+    persistence.save_registration_data(hashed_password, registration_data["username"], dt)
+
+
+def get_login_data(login_data, cookiedata):
+    login = persistence.get_login_data(login_data['user'])
+    if not login:
+        return False
+    if login_data['user'] == login['name'] and verify_password(login_data['password'], login['password']) is True:
+        cookiedata['username'] = login_data['user']
+        cookiedata['logged_in_id'] = login['id']
+        return True
+    return False
+
+
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 def get_card_status(status_id):
