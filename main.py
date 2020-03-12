@@ -7,7 +7,6 @@ app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
-
 @app.route("/", methods=['GET', 'POST'])
 def index():
     invalid = ''
@@ -42,7 +41,6 @@ def get_cards_for_board(board_id: int):
     return data_handler.get_cards_for_board(board_id)
 
 
-
 @app.route('/logout')
 def logout():
     session.pop('username', None)
@@ -69,6 +67,13 @@ def rename_board():
     new_name = request.get_json()
     data_handler.update_with_boardname(new_name['oldboardname'], new_name['newboardname'])
     return ({'newname': new_name['newboardname']})
+
+
+@app.route("/save-new-board", methods=['POST', 'GET'])
+@json_response
+def save_new_board():
+    if request.method == 'POST':
+        return data_handler.saving_new_board()
 
 
 def main():
