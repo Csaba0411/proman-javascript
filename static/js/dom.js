@@ -45,7 +45,6 @@ export let dom = {
                 ${boardList}
             </div>
         `;
-
         let boardsContainer = document.querySelector('#boards');
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
     },
