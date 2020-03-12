@@ -127,6 +127,15 @@ def add_new_status(cursor, status_name):
     VALUES (%(status_name)s)
     """, {'status_name': status_name})
 
+
+@database_common.connection_handler
+def delete_board(cursor, board_id):
+    cursor.execute("""
+    DELETE 
+    FROM board
+    WHERE id = %(board_id)s
+    """, {'board_id': board_id})
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
