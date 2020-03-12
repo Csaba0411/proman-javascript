@@ -121,6 +121,12 @@ def save_new_board(cursor):
     return None
 
 
+@database_common.connection_handler
+def add_new_status(cursor, status_name):
+    cursor.execute("""INSERT INTO statuses(title)
+    VALUES (%(status_name)s)
+    """, {'status_name': status_name})
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
