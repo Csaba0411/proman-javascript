@@ -6,7 +6,6 @@ import data_handler
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-# xxxxxxxxxxxxxx
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -16,7 +15,6 @@ def index():
         if data_handler.get_login_data(request.form, session) is False:
             invalid = 'Your username or password is invalid!'
     return render_template('index.html', invalid_input=invalid, session=session)
-# xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 @app.route("/get-boards")
@@ -43,7 +41,6 @@ def get_cards_for_board(board_id: int):
     """
     return data_handler.get_cards_for_board(board_id)
 
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 @app.route('/logout')
@@ -66,7 +63,12 @@ def registration():
         return redirect('/')
     return render_template('user_registration.html')
 
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+@app.route('/rename-board', methods=['GET', 'POST'])
+def rename_board():
+    new_name = request.get_json()
+    data_handler.update_with_boardname(new_name['oldboardname'], new_name['newboardname'])
+    return ({'newname': new_name['newboardname']})
 
 
 def main():
