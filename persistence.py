@@ -94,6 +94,23 @@ def get_status_title_by_id(cursor, card_id):
     """, {'card_id': card_id})
     return cursor.fetchone()
 
+
+@database_common.connection_handler
+def update_boardname(cursor, oldnameid, newname):
+    cursor.execute("""UPDATE board
+    SET title = %(newname)s
+    WHERE id = %(oldnameid)s""",
+    {'oldnameid': oldnameid, 'newname': newname})
+
+
+@database_common.connection_handler
+def get_board_id_by_name(cursor, oldname):
+    cursor.execute("""SELECT  id
+    FROM board
+    WHERE title = %(oldname)s""",
+                   {'oldname': oldname})
+    return cursor.fetchone()
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
