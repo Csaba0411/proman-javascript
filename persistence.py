@@ -141,6 +141,7 @@ def get_status_by_name(cursor, name):
     return cursor.fetchone()
 
 
+@database_common.connection_handler
 def delete_board(cursor, board_id):
     cursor.execute("""
     DELETE
