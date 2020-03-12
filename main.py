@@ -72,8 +72,9 @@ def rename_board():
 @app.route("/save-new-board", methods=['POST', 'GET'])
 @json_response
 def save_new_board():
-    if request.method == 'POST':
-        return data_handler.saving_new_board()
+    return data_handler.saving_new_board()
+
+
 
 
 @app.route("/save-new-card", methods=['POST', 'GET'])
