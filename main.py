@@ -82,6 +82,12 @@ def new_status(status_name):
     data_handler.add_new_status(status_name)
 
 
+@app.route('/delete/<board_id>')
+@json_response
+def delete_board(board_id):
+    data_handler.delete_board(board_id)
+
+
 def main():
     app.run(debug=True)
 
