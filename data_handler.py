@@ -106,7 +106,11 @@ def delete_board(board_id):
 def saving_new_card(board_id):
     return persistence.save_new_card(board_id)
 
-
+def saving_new_board():
+    board_id = int(persistence.collect_all_board()[-1]['id']) + 1
+    persistence.save_new_board()
+    for counter in range(4):
+        persistence.add_default_status_to_newboard(board_id, counter)
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
 #     all_cards = persistence.get_cards()
