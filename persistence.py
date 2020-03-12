@@ -10,6 +10,41 @@ def collect_all_board(cursor):
     return cursor.fetchall()
 
 
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@database_common.connection_handler
+def get_users_data(cursor):
+    cursor.execute("""SELECT *
+    FROM users
+    ORDER BY  name""")
+    datadict = cursor.fetchall()
+    return datadict
+
+
+@database_common.connection_handler
+def save_registration_data(cursor, hashed_password, user_name, date):
+    cursor.execute("""
+    INSERT INTO users(name, password, registration_date) 
+    VALUES (%s, %s, date_trunc('second', %s));
+    """, (user_name, hashed_password, date))
+
+
+@database_common.connection_handler
+def get_login_data(cursor, username):
+    cursor.execute("""SELECT *
+    FROM users
+    WHERE  name = %(username)s""",
+                   {'username': username})
+    datadict = cursor.fetchone()
+    if not datadict:
+        data = {}
+        return data
+    else:
+        data = datadict
+        return data
+
+
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
 # @database_common.connection_handler
 # def get_cards_by_board_id(cursor, board_id):
 #     cursor.execute("""
@@ -58,7 +93,6 @@ def get_status_title_by_id(cursor, card_id):
     WHERE id = %(card_id)s
     """, {'card_id': card_id})
     return cursor.fetchone()
-
 
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
