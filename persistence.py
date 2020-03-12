@@ -136,6 +136,15 @@ def delete_board(cursor, board_id):
     WHERE id = %(board_id)s
     """, {'board_id': board_id})
 
+
+@database_common.connection_handler
+def save_new_card(cursor, board_id):
+    cursor.execute("""
+        INSERT INTO cards (board_id, title, status_id)
+        VALUES (%(board_id)s, 'New Card', 0); 
+        """, {'board_id': board_id})
+    return None
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
