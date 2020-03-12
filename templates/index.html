@@ -21,8 +21,28 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
     <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+    <script src='/static/js/showPassword.js' defer></script>
 </head>
 <body>
+<!-- my changes -->
+<div>
+    {% if not session.username %}
+        <form action="/" name="login" autocomplete="off" method="post">
+        <input type="text" placeholder="Username" name="user"><br>
+        <input class="password" type="password" placeholder="Password" name="password">
+        <input id="checkbox" type="checkbox">Show Password
+        <br>
+    {% else %}
+        <form action="/logout" name="logout" method="get">
+    {% endif %}
+    <p>{{ 'Logged in: '+session.username if session.username else '' }}</p>
+    <input type="submit" value="{{ 'Log out' if session.username else 'Log in' }}">
+    </form><br>
+</div>
+<div class="error">
+    {{ invalid_input }}
+</div>
+<!-- my changes -->
 <h1>ProMan</h1>
 <div id="boards"></div>
 </body>
