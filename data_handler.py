@@ -94,6 +94,11 @@ def update_with_boardname(oldname, newname):
 def saving_new_board():
     return persistence.save_new_board()
 
+
+def add_new_status(status_name):
+    persistence.add_new_status(status_name)
+
+
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
 #     all_cards = persistence.get_cards()
