@@ -19,6 +19,15 @@ export let dataHandler = {
     _api_post: function (url, data, callback) {
         // it is not called from outside
         // sends the data to the API, and calls callback function
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((json_response) => callback(json_response));
     },
     init: function () {
     },
@@ -39,6 +48,12 @@ export let dataHandler = {
         this._api_get('/get-statuses', (response) => {
             this._data = response;
             callback(response)
+        });
+    },
+    sendNewName: function (data,callback) {
+        this._api_post('/rename-board',data,(response) =>{
+             this._data = response;
+                callback(response);
         });
     },
     getStatus: function (statusId, callback) {
