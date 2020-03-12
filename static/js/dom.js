@@ -53,7 +53,25 @@ export let dom = {
         let boardsContainer = document.querySelector('#boards');
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
         renameFunction();
-        hideShowColumn()
+        hideShowColumn();
+
+        document.getElementById("plus-sign").addEventListener("click", function(){
+        let newBoard =
+                    `<section class="board">
+                    <div class="board-header"><button class="board-title">New Board</button>
+                    <button class="board-add">Add Card</button>
+                    <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
+                    </div></section>`;
+
+        let boardsContainer = document.querySelector('.board-container');
+        boardsContainer.insertAdjacentHTML("beforeend", newBoard);
+
+        let data = "kutyafasz";
+        dataHandler.addBoard(data, function () {
+                    console.log('testing')});
+        renameFunction();
+        hideShowColumn();
+        });
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
