@@ -76,6 +76,14 @@ def save_new_board():
         return data_handler.saving_new_board()
 
 
+@app.route("/save-new-card", methods=['POST', 'GET'])
+@json_response
+def save_new_card():
+    if request.method == 'POST':
+        board_id = request.get_json()
+        return data_handler.saving_new_card(board_id)
+
+
 @app.route('/new-status/<status_name>')
 @json_response
 def new_status(status_name):
