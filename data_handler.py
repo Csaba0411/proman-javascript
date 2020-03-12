@@ -67,8 +67,6 @@ def get_boards():
         board['status'] = get_statuses_for_specific_board(board['id'])
         for stat in board['status']:
             board[stat] = [card['card'] for card in cards if card['status'] == stat]
-
-    print(all_board)
     return all_board
 
 
@@ -79,13 +77,18 @@ def get_statuses_for_specific_board(board_id):
 
 def get_cards_for_board(board_id):
     status_ids = persistence.all_status_ids_of_a_board(board_id)
-
     persistence.get_card_name_by_status_id(status_id, board_id)
     return
 
 
 def get_statuses_from_persistence():
+
     return persistence.get_statuses
+
+
+def update_with_boardname(oldname, newname):
+    oldnameid = persistence.get_board_id_by_name(oldname)
+    persistence.update_boardname(oldnameid['id'], newname)
 
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
