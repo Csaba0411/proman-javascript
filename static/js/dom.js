@@ -6,6 +6,7 @@ export let dom = {
         // This function should run once, when the page is loaded.
     },
     loadBoards: function () {
+        document.querySelector('#boards').textContent = '';
         // retrieves boards and makes showBoards called
         dataHandler.getBoards(function (boards) {
             dom.showBoards(boards);
@@ -23,6 +24,7 @@ export let dom = {
                 <button class="board-add">Add Card</button>
                 <button class="board-add add-status" data-board-id="${board['id']}">Add status</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
+                <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${board['id']}"></i></div>
                 </div>
                 <div class="board-columns">`;
             for (let stat of board['status']) {
@@ -56,6 +58,7 @@ export let dom = {
         renameFunction();
         hideShowColumn();
         addColumn();
+        deleteBoard();
 
         document.getElementById("plus-sign").addEventListener("click", function () {
             let newBoard =
@@ -73,6 +76,8 @@ export let dom = {
                 console.log('testing')
             });
             renameFunction();
+            let boardsHeaders = document.querySelectorAll('.board-header');
+            boardsHeaders[boardsHeaders.length - 1].innerHTML += `<div class="board-toggle"><i class="fas fa-trash-alt board-delete"></i></div>`;
         });
     },
     loadCards: function (boardId) {
@@ -149,3 +154,24 @@ let addColumn = function () {
             .then(response => response)
     }
 };
+
+
+let deleteBoard = function () {
+    let deleteButtonsForBoard = document.querySelectorAll('.board-delete');
+    for(let button of deleteButtonsForBoard){
+        button.addEventListener('click', function (event) {
+            let boardId = button.dataset.boardId;
+            sendDataAPI(boardId, dom.loadBoards);
+        })
+    }
+    function sendDataAPI(data, callback) {
+        fetch(`/delete/${data}`)
+            .then(response => response)
+            .then(data => callback(data))
+    }
+};
+
+
+// let addBoard = function () {
+//     let
+// }
