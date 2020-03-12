@@ -21,6 +21,7 @@ export let dom = {
                 <section class="board">
                 <div class="board-header"><button class="board-title">${board.title}</button>
                 <button class="board-add">Add Card</button>
+                <button class="board-add add-status" data-board-id="${board['id']}">Add status</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
                 </div>
                 <div class="board-columns">`;
@@ -42,7 +43,7 @@ export let dom = {
                      </div>`
             }
             boardList +=
-                    `</div>
+                `</div>
                      </section>`
         }
         const outerHtml = `
@@ -54,24 +55,25 @@ export let dom = {
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
         renameFunction();
         hideShowColumn();
+        addColumn();
 
-        document.getElementById("plus-sign").addEventListener("click", function(){
-        let newBoard =
-                    `<section class="board">
+        document.getElementById("plus-sign").addEventListener("click", function () {
+            let newBoard =
+                `<section class="board">
                     <div class="board-header"><button class="board-title">New Board</button>
                     <button class="board-add">Add Card</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                     </div></section>`;
 
-        let boardsContainer = document.querySelector('.board-container');
-        boardsContainer.insertAdjacentHTML("beforeend", newBoard);
+            let boardsContainer = document.querySelector('.board-container');
+            boardsContainer.insertAdjacentHTML("beforeend", newBoard);
 
-        let data = "kutyafasz";
-        dataHandler.addBoard(data, function () {
-                    console.log('testing')});
-        renameFunction();
-        hideShowColumn();
+            let data = "dog";
+            dataHandler.addBoard(data, function () {
+                console.log('testing')
+            });
         });
+        renameFunction();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -82,6 +84,7 @@ export let dom = {
     },
     // here comes more features
 };
+
 function renameFunction() {
     let rename = document.querySelectorAll('.board-title');
     for (let name of rename) {
@@ -129,5 +132,20 @@ let hideShowColumn = function () {
                 columns.classList.add('hide-element')
             }
         })
+    }
+};
+
+let addColumn = function () {
+    let statusButton = document.querySelectorAll('.add-status');
+    for (let button of statusButton){
+        button.addEventListener('click', function (e) {
+            let name = prompt('New status name:');
+            apiFetch(name);
+            e.preventDefault()
+        })
+    }
+    function apiFetch(name) {
+        fetch(`/new-status/${name}`)
+            .then(response => response)
     }
 };
