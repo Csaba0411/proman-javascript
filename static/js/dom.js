@@ -7,6 +7,7 @@ export let dom = {
     },
     loadBoards: function () {
         // retrieves boards and makes showBoards called
+        document.querySelector('#boards').textContent = '';
         dataHandler.getBoards(function (boards) {
             dom.showBoards(boards);
         });
@@ -137,15 +138,18 @@ let hideShowColumn = function () {
 
 let addColumn = function () {
     let statusButton = document.querySelectorAll('.add-status');
-    for (let button of statusButton){
+    for (let button of statusButton) {
         button.addEventListener('click', function (e) {
             let name = prompt('New status name:');
-            apiFetch(name);
+            let board = button.dataset.boardId;
+            apiFetch(board, name, dom.loadBoards);
             e.preventDefault()
         })
     }
-    function apiFetch(name) {
-        fetch(`/new-status/${name}`)
+
+    function apiFetch(board, name, callback) {
+        fetch(`/new-status/${board}/${name}`)
             .then(response => response)
+            .then(data => callback(data))
     }
 };
