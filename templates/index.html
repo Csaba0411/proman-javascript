@@ -28,6 +28,7 @@
 <!-- my changes -->
 <div>
     {% if not session.username %}
+        <div id="registration"><a href="/registration">Registration</a></div>
         <form action="/" name="login" autocomplete="off" method="post">
         <input type="text" placeholder="Username" name="user"><br>
         <input class="password" type="password" placeholder="Password" name="password">
