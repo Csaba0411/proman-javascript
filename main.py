@@ -1,17 +1,22 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, session, request, redirect
 from util import json_response
 
 import data_handler
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+# xxxxxxxxxxxxxx
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
-    """
-    This is a one-pager which shows all the boards and cards
-    """
-    return render_template('index.html')
+    invalid = ''
+    if request.method == 'POST':
+        if data_handler.get_login_data(request.form, session) is False:
+            invalid = 'Your username or password is invalid!'
+    return render_template('index.html', invalid_input=invalid, session=session)
+# xxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 @app.route("/get-boards")
@@ -37,6 +42,31 @@ def get_cards_for_board(board_id: int):
     :param board_id: id of the parent board
     """
     return data_handler.get_cards_for_board(board_id)
+
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('logged_in_id', None)
+    return redirect('/')
+
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if session:
+        return redirect('/')
+    if request.method == "POST":
+        if data_handler.comparing_passwords(request.form) is False:
+            return render_template('user_registration.html', error='Password Does Not Match! :(')
+        elif data_handler.comparing_new_user_name(request.form) is False:
+            return render_template('user_registration.html', error='Already registered username!')
+        data_handler.adding_registration_data(request.form)
+        return redirect('/')
+    return render_template('user_registration.html')
+
+# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 def main():
