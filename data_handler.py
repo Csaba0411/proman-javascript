@@ -90,6 +90,10 @@ def update_with_boardname(oldname, newname):
     oldnameid = persistence.get_board_id_by_name(oldname)
     persistence.update_boardname(oldnameid['id'], newname)
 
+
+def saving_new_board():
+    return persistence.save_new_board()
+
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
 #     all_cards = persistence.get_cards()
