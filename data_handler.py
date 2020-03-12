@@ -75,10 +75,10 @@ def get_statuses_for_specific_board(board_id):
             in persistence.get_all_cards_status_id_for_a_board(board_id)]
 
 
-def get_cards_for_board(board_id):
-    status_ids = persistence.all_status_ids_of_a_board(board_id)
-    persistence.get_card_name_by_status_id(status_id, board_id)
-    return
+# def get_cards_for_board(board_id):
+#     status_ids = persistence.all_status_ids_of_a_board(board_id)
+#     persistence.get_card_name_by_status_id(status_id, board_id)
+#     return
 
 
 def get_statuses_from_persistence():
@@ -97,6 +97,10 @@ def saving_new_board():
 
 def add_new_status(status_name):
     persistence.add_new_status(status_name)
+
+
+def delete_board(board_id):
+    persistence.delete_board(board_id)
 
 
 # def get_cards_for_board(board_id):
