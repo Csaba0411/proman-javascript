@@ -21,17 +21,24 @@ export let dom = {
             boardList += `
                 <section class="board">
                 <div class="board-header"><button class="board-title">${board.title}</button>
-                <button class="board-add">Add Card</button>
+                <button class="board-add" data-board-id="${board['id']}">Add Card</button>
                 <button class="board-add add-status" data-board-id="${board['id']}">Add status</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
                 <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${board['id']}"></i></div>
                 </div>
                 <div class="board-columns">`;
             for (let stat of board['status']) {
-                boardList +=
-                    `<div class="board-column">
+                if (stat === 'new') {
+                    boardList +=
+                        `<div class="board-column column-for-new-cards" data-board-id="${board['id']}">
                         <div class="board-column-title">${stat}</div>
                         <div class="board-column-content">`;
+                } else {
+                    boardList +=
+                        `<div class="board-column">
+                        <div class="board-column-title">${stat}</div>
+                        <div class="board-column-content">`;
+                }
                 for (let card of board[stat]) {
                     boardList +=
                         `<div class="card">
@@ -61,24 +68,56 @@ export let dom = {
         deleteBoard();
 
         document.getElementById("plus-sign").addEventListener("click", function () {
-            let newBoard =
-                `<section class="board">
+            dataHandler.getBoards(function (boards) {
+                let board_id = 0;
+                for (let board of boards) {
+                    if (board_id < board['id']) {
+                        board_id = board['id'];
+                    }
+                }
+                let newBoard =
+                    `<section class="board">
                     <div class="board-header"><button class="board-title">New Board</button>
-                    <button class="board-add">Add Card</button>
+                    <button class="board-add" data-board-id="${board_id}">Add Card</button>
+                    <button class="board-add add-status" data-board-id="${board_id}">Add status</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                     </div></section>`;
 
-            let boardsContainer = document.querySelector('.board-container');
-            boardsContainer.insertAdjacentHTML("beforeend", newBoard);
+                let boardsContainer = document.querySelector('.board-container');
+                boardsContainer.insertAdjacentHTML("beforeend", newBoard);
 
-            let data = "dog";
-            dataHandler.addBoard(data, function () {
+                let data = "dog";
+                dataHandler.addBoard(data, function () {
+                    console.log('testing')
+                });
+                renameFunction();
+                let boardsHeaders = document.querySelectorAll('.board-header');
+                boardsHeaders[boardsHeaders.length - 1].innerHTML += `<div class="board-toggle"><i class="fas fa-trash-alt board-delete"></i></div>`;
+            });
+        });
+
+    let addCardButtons = document.getElementsByClassName("board-add");
+        for (let button of addCardButtons){
+            button.addEventListener("click", function () {
+            let newCard =
+                `<div class="card">
+                            <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
+                            <div class="card-title">New Card</div>
+                        </div>`;
+
+            let board_id = this.dataset.boardId;
+            let allCardContainer = document.getElementsByClassName('column-for-new-cards');
+            for (let cardContainer of allCardContainer) {
+                if (cardContainer.dataset.boardId === board_id) {
+                    cardContainer.insertAdjacentHTML("beforeend", newCard);
+                }
+            }
+
+            dataHandler.addCard(board_id, function () {
                 console.log('testing')
             });
-            renameFunction();
-            let boardsHeaders = document.querySelectorAll('.board-header');
-            boardsHeaders[boardsHeaders.length - 1].innerHTML += `<div class="board-toggle"><i class="fas fa-trash-alt board-delete"></i></div>`;
         });
+        }
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -142,13 +181,14 @@ let hideShowColumn = function () {
 
 let addColumn = function () {
     let statusButton = document.querySelectorAll('.add-status');
-    for (let button of statusButton){
+    for (let button of statusButton) {
         button.addEventListener('click', function (e) {
             let name = prompt('New status name:');
             apiFetch(name);
             e.preventDefault()
         })
     }
+
     function apiFetch(name) {
         fetch(`/new-status/${name}`)
             .then(response => response)
@@ -158,12 +198,13 @@ let addColumn = function () {
 
 let deleteBoard = function () {
     let deleteButtonsForBoard = document.querySelectorAll('.board-delete');
-    for(let button of deleteButtonsForBoard){
+    for (let button of deleteButtonsForBoard) {
         button.addEventListener('click', function (event) {
             let boardId = button.dataset.boardId;
             sendDataAPI(boardId, dom.loadBoards);
         })
     }
+
     function sendDataAPI(data, callback) {
         fetch(`/delete/${data}`)
             .then(response => response)
