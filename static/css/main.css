@@ -137,3 +137,11 @@ section.board{
     top: 3%;
     right: 3%;
 }
+
+#plus-sign{
+    display: block;
+    height: 4rem;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
