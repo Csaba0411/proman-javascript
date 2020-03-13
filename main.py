@@ -85,10 +85,10 @@ def save_new_card():
         return data_handler.saving_new_card(board_id)
 
 
-@app.route('/new-status/<status_name>')
+@app.route('/new-status/<board_name>/<status_name>')
 @json_response
-def new_status(status_name):
-    data_handler.add_new_status(status_name)
+def new_status(board_name, status_name):
+    data_handler.add_new_status(board_name, status_name)
 
 
 @app.route('/delete/<board_id>')

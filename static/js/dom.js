@@ -8,6 +8,7 @@ export let dom = {
     loadBoards: function () {
         document.querySelector('#boards').textContent = '';
         // retrieves boards and makes showBoards called
+        document.querySelector('#boards').textContent = '';
         dataHandler.getBoards(function (boards) {
             dom.showBoards(boards);
         });
@@ -21,7 +22,7 @@ export let dom = {
             boardList += `
                 <section class="board">
                 <div class="board-header"><button class="board-title">${board.title}</button>
-                <button class="board-add" data-board-id="${board['id']}">Add Card</button>
+                <button class="board-add add-card" data-board-id="${board['id']}">Add Card</button>
                 <button class="board-add add-status" data-board-id="${board['id']}">Add status</button>
                 <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
                 <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${board['id']}"></i></div>
@@ -79,7 +80,7 @@ export let dom = {
                 let newBoard =
                     `<section class="board">
                     <div class="board-header"><button class="board-title">New Board</button>
-                    <button class="board-add" data-board-id="${board_id}">Add Card</button>
+                    <button class="board-add add-card" data-board-id="${board_id}">Add Card</button>
                     <button class="board-add add-status" data-board-id="${board_id}">Add status</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                     </div>
@@ -116,7 +117,7 @@ export let dom = {
             });
         });
 
-        let addCardButtons = document.getElementsByClassName("board-add");
+        let addCardButtons = document.getElementsByClassName("add-card");
         for (let button of addCardButtons) {
             button.addEventListener("click", function () {
                 let newCard =
@@ -206,14 +207,16 @@ let addColumn = function () {
     for (let button of statusButton) {
         button.addEventListener('click', function (e) {
             let name = prompt('New status name:');
-            apiFetch(name);
+            let board = button.dataset.boardId;
+            apiFetch(board, name, dom.loadBoards);
             e.preventDefault()
         })
     }
 
-    function apiFetch(name) {
-        fetch(`/new-status/${name}`)
+    function apiFetch(board, name, callback) {
+        fetch(`/new-status/${board}/${name}`)
             .then(response => response)
+            .then(data => callback(data))
     }
 };
 
@@ -233,8 +236,3 @@ let deleteBoard = function () {
             .then(data => callback(data))
     }
 };
-
-
-// let addBoard = function () {
-//     let
-// }

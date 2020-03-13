@@ -91,12 +91,10 @@ def update_with_boardname(oldname, newname):
     persistence.update_boardname(oldnameid['id'], newname)
 
 
-def saving_new_board():
-    return persistence.save_new_board()
-
-
-def add_new_status(status_name):
+def add_new_status(board_name, status_name):
     persistence.add_new_status(status_name)
+    status_id = persistence.get_status_by_name(status_name)
+    persistence.add_card_by_board_and_status(board_name, status_id['id'])
 
 
 def delete_board(board_id):
@@ -106,11 +104,13 @@ def delete_board(board_id):
 def saving_new_card(board_id):
     return persistence.save_new_card(board_id)
 
+
 def saving_new_board():
     board_id = int(persistence.collect_all_board()[-1]['id']) + 1
     persistence.save_new_board()
     for counter in range(4):
         persistence.add_default_status_to_newboard(board_id, counter)
+
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
 #     all_cards = persistence.get_cards()
