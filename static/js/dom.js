@@ -81,7 +81,7 @@ export let dom = {
                     <div class="board-header"><button class="board-title">New Board</button>
                     <button class="board-add" data-board-id="${board_id}">Add Card</button>
                     <button class="board-add add-status" data-board-id="${board_id}">Add status</button>
-<!--                    <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>-->
+                    <button class="board-toggle"><i class="fas fa-chevron-down"></i></button>
                     </div>
                     <div class="board-columns">`;
                 for (let stats of ['new', 'in progress', 'testing', 'done']) {
