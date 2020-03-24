@@ -1,5 +1,4 @@
 import persistence
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 from datetime import datetime
 import bcrypt
@@ -45,9 +44,6 @@ def get_login_data(login_data, cookiedata):
         cookiedata['logged_in_id'] = login['id']
         return True
     return False
-
-
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 
 def get_card_status(status_id):
@@ -105,11 +101,11 @@ def saving_new_card(board_id):
     return persistence.save_new_card(board_id)
 
 
-def saving_new_board():
-    board_id = int(persistence.collect_all_board()[-1]['id']) + 1
-    persistence.save_new_board()
-    for counter in range(4):
-        persistence.add_default_status_to_newboard(board_id, counter)
+def saving_new_board(board_name):
+    persistence.add_new_board(board_name)
+    board_id = persistence.get_board_id_by_title(board_name)
+    persistence.add_default_status_to_new_board(board_id['id'])
+    return board_id['id']
 
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
@@ -120,3 +116,7 @@ def saving_new_board():
 #             card['status_id'] = get_card_status(card['status_id'])  # Set textual status for the card
 #             matching_cards.append(card)
 #     return matching_cards
+
+
+def rename_board(board_id, new_name_for_board):
+    persistence.rename_board_sql(board_id, new_name_for_board)
