@@ -232,4 +232,3 @@ function addBoard() {
     boardContainer.insertAdjacentHTML("beforeend",board)
     }
 }
-console.log('Hello');
