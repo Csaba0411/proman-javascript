@@ -88,3 +88,13 @@ crashlytics-build.properties
 fabric.properties
 
 .DS_Store
+
+
+# Created by https://www.gitignore.io/api/floobits
+# Edit at https://www.gitignore.io/?templates=floobits
+.flooignore
+
+### floobits ###
+.floo
+
+# End of https://www.gitignore.io/api/floobits
