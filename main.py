@@ -62,27 +62,25 @@ def registration():
     return render_template('user_registration.html')
 
 
-@app.route('/rename-board', methods=['GET', 'POST'])
-def rename_board():
-    new_name = request.get_json()
-    data_handler.update_with_boardname(new_name['oldboardname'], new_name['newboardname'])
-    return ({'newname': new_name['newboardname']})
-
-
-@app.route("/save-new-board", methods=['POST', 'GET'])
+@app.route('/rename-board/<board_id>/<new_name_for_board>')
 @json_response
-def save_new_board():
-    return data_handler.saving_new_board()
+def rename_board(board_id, new_name_for_board):
+    data_handler.rename_board(board_id, new_name_for_board)
+    return new_name_for_board
 
 
-
-
-@app.route("/save-new-card", methods=['POST', 'GET'])
+@app.route("/save-new-board/<board_name>")
 @json_response
-def save_new_card():
-    if request.method == 'POST':
-        board_id = request.get_json()
-        return data_handler.saving_new_card(board_id)
+def save_new_board(board_name):
+    board_id = data_handler.saving_new_board(board_name)
+    return board_id
+
+
+@app.route("/save-new-card/<board_id>")
+@json_response
+def save_new_card(board_id):
+    data_handler.saving_new_card(board_id)
+# Day 14 in quarantine: still Áron is my favourite man
 
 
 @app.route('/new-status/<board_name>/<status_name>')
