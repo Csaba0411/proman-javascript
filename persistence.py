@@ -74,7 +74,7 @@ def get_all_cards_status_id_for_a_board(cursor, board_id):
 @database_common.connection_handler
 def get_card_status_board(cursor, board_id):
     cursor.execute("""
-    SELECT cards.title as card, s.title as status, b.title as board
+    SELECT cards.id as card_id, cards.title as card, s.title as status, b.title as board
     FROM cards
     JOIN statuses s on cards.status_id = s.id
     JOIN board b on cards.board_id = b.id
@@ -206,6 +206,39 @@ def rename_column(cursor, board_id, status_id, old_status_id):
     SET status_id = %(status_id)s
     WHERE board_id = %(board_id)s AND status_id = %(old_status_id)s
     """, {"board_id": board_id, "status_id": status_id, "old_status_id": old_status_id})
+
+
+@database_common.connection_handler
+def get_last_card(cursor):
+    cursor.execute("""
+    SELECT id
+    FROM cards
+    ORDER BY id DESC
+    LIMIT 1;
+    """)
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def change_card_name(cursor, card_id, new_name):
+    cursor.execute("""
+    UPDATE cards
+    SET title = %(new_name)s
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id, 'new_name': new_name})
+
+
+@database_common.connection_handler
+def get_last_card_by_board_id(cursor, board_id):
+    cursor.execute("""
+    SELECT id, board_id
+    FROM cards
+    WHERE board_id = %(board_id)s
+    ORDER BY id
+    LIMIT 1  
+    """, {'board_id': board_id})
+    return cursor.fetchone()
+
 
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
