@@ -136,3 +136,7 @@ def get_last_card():
 
 def change_card_name_data_handler(card_id, new_name):
     persistence.change_card_name(card_id, new_name)
+
+
+def delete_card(card_id):
+    persistence.delete_card_sql(card_id)
