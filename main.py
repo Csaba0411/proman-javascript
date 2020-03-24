@@ -109,6 +109,12 @@ def rename_card(card_id, new_name):
     data_handler.change_card_name_data_handler(card_id, new_name)
 
 
+@app.route('/delete-card/<card_id>')
+@json_response
+def delete_card(card_id):
+    data_handler.delete_card(card_id)
+
+
 def main():
     app.run(debug=True)
 
