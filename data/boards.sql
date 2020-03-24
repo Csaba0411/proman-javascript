@@ -11,6 +11,7 @@ ALTER TABLE IF EXISTS ONLY public.statuses
 ALTER TABLE IF EXISTS ONLY public.users
     DROP CONSTRAINT IF EXISTS pk_users_id CASCADE;
 
+
 DROP TABLE IF EXISTS public.board;
 CREATE TABLE board
 (
@@ -33,7 +34,7 @@ CREATE TABLE cards
 DROP TABLE IF EXISTS public.statuses;
 CREATE TABLE statuses
 (
-    id    serial,
+    id serial NOT NULL,
     title text
 );
 
@@ -70,36 +71,38 @@ INSERT INTO board (title)
 VALUES ('Board 1');
 INSERT INTO board (title)
 VALUES ('Board 2');
-INSERT INTO statuses (id, title)
-VALUES (0, 'new');
-INSERT INTO statuses (id, title)
-VALUES (1, 'in progress');
-INSERT INTO statuses (id, title)
-VALUES (2, 'testing');
-INSERT INTO statuses (id, title)
-VALUES (3, 'done');
+
+INSERT INTO statuses (title)
+VALUES ('new');
+INSERT INTO statuses (title)
+VALUES ('in progress');
+INSERT INTO statuses (title)
+VALUES ('testing');
+INSERT INTO statuses (title)
+VALUES ('done');
+
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'new card 1', 0, false);
+VALUES (1, 'new card 1', 1, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'new card 2', 0, true);
+VALUES (1, 'new card 2', 1, true);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'in progress card', 1, false);
+VALUES (1, 'in progress card', 2, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'planning', 2, false);
+VALUES (1, 'planning', 3, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'done card 1', 3, false);
+VALUES (1, 'done card 1', 4, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'done card 1', 3, true);
+VALUES (1, 'done card 1', 4, true);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'new card 1', 0, false);
+VALUES (2, 'new card 1', 1, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'new card 2', 0, true);
+VALUES (2, 'new card 2', 1, true);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'in progress card', 1, false);
+VALUES (2, 'in progress card', 2, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'planning', 2, false);
+VALUES (2, 'planning', 3, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'done card 1', 3, false);
+VALUES (2, 'done card 1', 4, false);
 INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'done card 1', 3, true);
+VALUES (2, 'done card 1', 4, true);
 
