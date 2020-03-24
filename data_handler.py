@@ -62,7 +62,7 @@ def get_boards():
         cards = persistence.get_card_status_board(board['id'])
         board['status'] = get_statuses_for_specific_board(board['id'])
         for stat in board['status']:
-            board[stat] = [card['card'] for card in cards if card['status'] == stat]
+            board[stat] = [(card['card'], card['card_id']) for card in cards if card['status'] == stat]
     return all_board
 
 
@@ -105,7 +105,8 @@ def saving_new_board(board_name):
     persistence.add_new_board(board_name)
     board_id = persistence.get_board_id_by_title(board_name)
     persistence.add_default_status_to_new_board(board_id['id'])
-    return board_id['id']
+    last_card_for_new_board = persistence.get_last_card_by_board_id(board_id['id'])
+    return last_card_for_new_board
 
 # def get_cards_for_board(board_id):
 #     persistence.clear_cache()
@@ -127,3 +128,11 @@ def rename_column(board_id, column_name, old_col_name):
     status_id = persistence.get_status_by_name(column_name)
     old_status_id = persistence.get_status_by_name(old_col_name)
     persistence.rename_column(board_id, status_id['id'], old_status_id['id'])
+
+
+def get_last_card():
+    return persistence.get_last_card()
+
+
+def change_card_name_data_handler(card_id, new_name):
+    persistence.change_card_name(card_id, new_name)
