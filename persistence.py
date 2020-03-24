@@ -5,12 +5,12 @@ import database_common
 def collect_all_board(cursor):
     cursor.execute("""
         SELECT id, title
-        FROM board;
+        FROM board
+        ORDER BY id;
     """)
     return cursor.fetchall()
 
 
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 @database_common.connection_handler
 def get_users_data(cursor):
     cursor.execute("""SELECT *
@@ -41,9 +41,6 @@ def get_login_data(cursor, username):
     else:
         data = datadict
         return data
-
-
-# xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # @database_common.connection_handler
 # def get_cards_by_board_id(cursor, board_id):
@@ -154,15 +151,53 @@ def delete_board(cursor, board_id):
 def save_new_card(cursor, board_id):
     cursor.execute("""
         INSERT INTO cards (board_id, title, status_id)
-        VALUES (%(board_id)s, 'New Card', 0);
+        VALUES (%(board_id)s, 'New Card', 1);
         """, {'board_id': board_id})
-    return None
 
 
 @database_common.connection_handler
-def add_default_status_to_newboard(cursor, board_id, counter):
+def add_new_board(cursor, board_name):
+    cursor.execute("""
+    INSERT INTO board (title)
+    VALUES (%(board_name)s)
+    """, {'board_name': board_name})
+
+
+@database_common.connection_handler
+def get_board_id_by_title(cursor, board_name):
+    cursor.execute("""
+    SELECT id
+    FROM board
+    WHERE title = %(board_name)s
+    """, {'board_name': board_name})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def add_default_status_to_new_board(cursor, board_id):
     cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
-    VALUES (%s, 'New card', %s, false)""", (board_id, counter))
+    VALUES (%(board_id)s, 'New card', 1, false);
+
+    INSERT INTO cards(board_id, title, status_id, "order")
+    VALUES( %(board_id)s, 'New card', 2, false);
+    
+    INSERT INTO cards(board_id, title, status_id, "order")
+    VALUES( %(board_id)s, 'New card', 3, false);
+    
+    INSERT INTO cards(board_id, title, status_id, "order")
+    VALUES( %(board_id)s, 'New card', 4, false);
+    
+    """, {'board_id': board_id})
+
+
+@database_common.connection_handler
+def rename_board_sql(cursor, board_id, board_name):
+    cursor.execute("""
+    UPDATE board
+    SET title = %(board_name)s
+    WHERE id = %(board_id)s
+    """, {'board_name': board_name, 'board_id': board_id})
+
 
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
