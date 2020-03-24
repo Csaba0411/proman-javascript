@@ -43,8 +43,8 @@ export let dom = {
                 for (let card of board[stat]) {
                     boardList +=
                         `<div class="card">
-                            <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
-                            <div class="card-title">${card}</div>
+                            <div class="card-remove" data-card-id="${card[1]}"><i class="fas fa-trash-alt"></i></div>
+                            <div class="card-title" data-card-id="${card[1]}">${card[0]}</div>
                         </div>`
 
                 }
@@ -70,7 +70,7 @@ export let dom = {
         deleteBoard();
         addCard();
         renameColumn();
-
+        renameCards();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -179,8 +179,8 @@ function addCard() {
         let allCardContainer = document.getElementsByClassName('column-for-new-cards');
         let newCard =
             `<div class="card">
-                    <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
-                    <div class="card-title">New Card</div>
+                    <div class="card-remove" data-card-id="${data}"><i class="fas fa-trash-alt"></i></div>
+                    <div class="card-title" data-card-id="${data}">New Card</div>
                 </div>`;
         for (let cardContainer of allCardContainer) {
             if (cardContainer.dataset.boardId === boardId) {
@@ -207,31 +207,33 @@ function addBoard() {
         let boardContainer = document.querySelector('.board-container');
         let board = `
                 <section class="board">
-                <div class="board-header"><button class="board-title" data-board-id="${data}">${newBoardName}</button>
-                    <button class="board-add add-card" data-board-id="${data}">Add Card</button>
-                    <button class="board-add add-status" data-board-id="${data}">Add status</button>
+                <div class="board-header"><button class="board-title" data-board-id="${data['board_id']}">${newBoardName}</button>
+                    <button class="board-add add-card" data-board-id="${data['board_id']}">Add Card</button>
+                    <button class="board-add add-status" data-board-id="${data['board_id']}">Add status</button>
                     <button class="board-toggle"><i class="fas fa-chevron-down toggle-button"></i></button>
-                    <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${data}"></i></div>
+                    <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${data['board_id']}"></i></div>
                 </div>
                 <div class="board-columns">`;
+        let firstCardId = data['id'];
         for (let stats of ['new', 'in progress', 'testing', 'done']) {
             if (stats === 'new') {
-                board += `<div class="board-column column-for-new-cards" data-board-id="${data}">`
+                board += `<div class="board-column column-for-new-cards" data-board-id="${data['board_id']}">`
             } else {
-                board += `<div class="board-column" data-board-id="${data}">`
+                board += `<div class="board-column" data-board-id="${data['board_id']}">`
             }
-            board += `<div class="board-column-title" data-board-id="${data}">${stats}</div>
+            board += `<div class="board-column-title" data-board-id="${data['board_id']}">${stats}</div>
                         <div class="board-column-content">
                             <div class="card">
-                            <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
-                            <div class="card-title">New card</div>
+                            <div class="card-remove" data-card-id="${firstCardId}"><i class="fas fa-trash-alt"></i></div>
+                            <div class="card-title" data-card-id="${firstCardId}">New card</div>
         </div>
         </div>
-        </div>`
+        </div>`;
+            firstCardId++;
         }
         board += `</div>
                    </section>`;
-    boardContainer.insertAdjacentHTML("beforeend",board)
+        boardContainer.insertAdjacentHTML("beforeend", board)
     }
 }
 
@@ -239,28 +241,59 @@ function renameColumn() {
     let columns = document.querySelectorAll('.board-column-title');
     let columnTitleInput = `<input type="text" id="input">`;
 
-    for (let column of columns){
+    for (let column of columns) {
         column.addEventListener('dblclick', function () {
             let oldInput = column.innerHTML;
             let oldColumnName = column.textContent;
             column.innerHTML = columnTitleInput;
             let titleInput = column.querySelector('#input');
             titleInput.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter'){
+                if (e.key === 'Enter') {
                     let boardId = column.dataset.boardId;
                     renameColumnApi(boardId, titleInput.value, oldColumnName, renameInHTML)
-                }else if (e.key === 'Escape'){
+                } else if (e.key === 'Escape') {
                     column.innerHTML = oldInput
                 }
             })
         });
+
         function renameColumnApi(boardId, columnName, oldColName, callback) {
             fetch(`/rename-column/${boardId}/${columnName}/${oldColName}`)
                 .then(response => response.json())
                 .then(data => callback(data, columnName))
         }
+
         function renameInHTML(data, columnName) {
             column.innerHTML = columnName
         }
+    }
+}
+
+function renameCards() {
+    let cards = document.querySelectorAll('.card-title');
+    let cardTitleInput = `<input type="text" autocomplete="off" id="input">`;
+    for (let card of cards) {
+        card.addEventListener('dblclick', function (event) {
+            let cardOldContent = card.innerHTML;
+            card.innerHTML = cardTitleInput;
+            let elementCardInput = card.querySelector('#input');
+            elementCardInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    sendNewName(card, elementCardInput.value, card.dataset.cardId, renameCardInHtml)
+                } else if (event.key === 'Escape') {
+                    card.innerHTML = cardOldContent;
+                }
+            })
+        })
+    }
+
+    function sendNewName(card, valueOfElementCardInput, cardId, callback) {
+        fetch(`/rename-card/${cardId}/${valueOfElementCardInput}`)
+            .then(response => response.json())
+            .then(data => callback(valueOfElementCardInput, card, data))
+    }
+
+    function renameCardInHtml(valueOfElementCardInput, card, data) {
+        card.innerHTML = valueOfElementCardInput
     }
 }
