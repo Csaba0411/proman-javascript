@@ -199,6 +199,14 @@ def rename_board_sql(cursor, board_id, board_name):
     """, {'board_name': board_name, 'board_id': board_id})
 
 
+@database_common.connection_handler
+def rename_column(cursor, board_id, status_id, old_status_id):
+    cursor.execute("""
+    UPDATE cards
+    SET status_id = %(status_id)s
+    WHERE board_id = %(board_id)s AND status_id = %(old_status_id)s
+    """, {"board_id": board_id, "status_id": status_id, "old_status_id": old_status_id})
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #

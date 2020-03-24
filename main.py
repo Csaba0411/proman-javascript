@@ -95,6 +95,12 @@ def delete_board(board_id):
     data_handler.delete_board(board_id)
 
 
+@app.route('/rename-column/<board_id>/<column_name>/<old_col_name>')
+@json_response
+def rename_column(board_id, column_name, old_col_name):
+    data_handler.rename_column(board_id, column_name, old_col_name)
+
+
 def main():
     app.run(debug=True)
 
