@@ -240,6 +240,14 @@ def get_last_card_by_board_id(cursor, board_id):
     return cursor.fetchone()
 
 
+@database_common.connection_handler
+def delete_card_sql(cursor, card_id):
+    cursor.execute("""
+    DELETE FROM cards
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id})
+
+
 # _cache = {}  # We store cached data in this dict to avoid multiple file readings
 #
 #
