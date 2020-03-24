@@ -72,14 +72,16 @@ def rename_board(board_id, new_name_for_board):
 @app.route("/save-new-board/<board_name>")
 @json_response
 def save_new_board(board_name):
-    board_id = data_handler.saving_new_board(board_name)
-    return board_id
+    card_ids_with_board_id = data_handler.saving_new_board(board_name)
+    return card_ids_with_board_id
 
 
 @app.route("/save-new-card/<board_id>")
 @json_response
 def save_new_card(board_id):
     data_handler.saving_new_card(board_id)
+    card_id = data_handler.get_last_card()
+    return card_id['id']
 # Day 14 in quarantine: still Áron is my favourite man
 
 
@@ -99,6 +101,12 @@ def delete_board(board_id):
 @json_response
 def rename_column(board_id, column_name, old_col_name):
     data_handler.rename_column(board_id, column_name, old_col_name)
+
+
+@app.route('/rename-card/<card_id>/<new_name>')
+@json_response
+def rename_card(card_id, new_name):
+    data_handler.change_card_name_data_handler(card_id, new_name)
 
 
 def main():
