@@ -71,6 +71,7 @@ export let dom = {
         addCard();
         renameColumn();
         renameCards();
+        deleteCard();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -295,5 +296,24 @@ function renameCards() {
 
     function renameCardInHtml(valueOfElementCardInput, card, data) {
         card.innerHTML = valueOfElementCardInput
+    }
+}
+
+function deleteCard() {
+    let trashButtonsOfCards = document.querySelectorAll('.card-remove');
+    for (let trash of trashButtonsOfCards) {
+        trash.addEventListener('click', function (event) {
+            sendApi(trash, trash.dataset.cardId, removeCardHTML);
+        })
+    }
+
+    function sendApi(trash, cardId, callback) {
+        fetch(`/delete-card/${cardId}`)
+            .then(response => response.json())
+            .then(data => callback(trash, data))
+    }
+    function removeCardHTML(trash, data){
+        let card = trash.parentNode;
+        card.remove();
     }
 }
