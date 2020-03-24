@@ -120,3 +120,10 @@ def saving_new_board(board_name):
 
 def rename_board(board_id, new_name_for_board):
     persistence.rename_board_sql(board_id, new_name_for_board)
+
+
+def rename_column(board_id, column_name, old_col_name):
+    persistence.add_new_status(column_name)
+    status_id = persistence.get_status_by_name(column_name)
+    old_status_id = persistence.get_status_by_name(old_col_name)
+    persistence.rename_column(board_id, status_id['id'], old_status_id['id'])
