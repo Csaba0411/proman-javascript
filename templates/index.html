@@ -25,57 +25,28 @@
     <script src='/static/js/showPassword.js' defer></script>
 </head>
 <body>
-<!-- my changes -->
 <div>
     {% if not session.username %}
-        <div id="registration"><a href="/registration">Registration</a></div>
-        <form action="/" name="login" autocomplete="off" method="post">
+    <div id="registration"><a href="/registration">Registration</a></div>
+    <form action="/" name="login" autocomplete="off" method="post">
         <input type="text" placeholder="Username" name="user"><br>
         <input class="password" type="password" placeholder="Password" name="password">
         <input id="checkbox" type="checkbox">Show Password
         <br>
+    </form>
     {% else %}
-        <form action="/logout" name="logout" method="get">
-    {% endif %}
-    <p>{{ 'Logged in: '+session.username if session.username else '' }}</p>
-    <input type="submit" value="{{ 'Log out' if session.username else 'Log in' }}">
-    </form><br>
+    <form action="/logout" name="logout" method="get">
+        {% endif %}
+        <p>{{ 'Logged in: '+session.username if session.username else '' }}</p>
+        <input type="submit" value="{{ 'Log out' if session.username else 'Log in' }}">
+    </form>
+    <br>
 </div>
 <div class="error">
     {{ invalid_input }}
 </div>
-<!-- my changes -->
 <h1>ProMan</h1>
 <div id="boards"></div>
 <img src="/static/img/plus.png" id="plus-sign">
-{#   modal#}
-<div id="small-modal" class="modal">
-    <div tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div id="small-modal-header" class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">x</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <table id="small-modal-table" class="table table-bordered">
-                        <thead class="thead-light">
-                        <tr id="table-head">
-                        </tr>
-                        </thead>
-                        <tbody id="small-body">
-                        <textarea id="textarea" placeholder="Add new name" cols="15"></textarea>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 </body>
 </html>
