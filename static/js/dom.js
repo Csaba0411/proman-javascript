@@ -32,12 +32,12 @@ export let dom = {
                 if (stat === 'new') {
                     boardList +=
                         `<div class="board-column column-for-new-cards" data-board-id="${board['id']}">
-                        <div class="board-column-title">${stat}</div>
+                        <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>
                         <div class="board-column-content">`;
                 } else {
                     boardList +=
                         `<div class="board-column">
-                        <div class="board-column-title">${stat}</div>
+                        <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>
                         <div class="board-column-content">`;
                 }
                 for (let card of board[stat]) {
@@ -69,6 +69,8 @@ export let dom = {
         addColumn();
         deleteBoard();
         addCard();
+        renameColumn();
+
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -218,7 +220,7 @@ function addBoard() {
             } else {
                 board += `<div class="board-column" data-board-id="${data}">`
             }
-            board += `<div class="board-column-title">${stats}</div>
+            board += `<div class="board-column-title" data-board-id="${data}">${stats}</div>
                         <div class="board-column-content">
                             <div class="card">
                             <div class="card-remove"><i class="fas fa-trash-alt"></i></div>
@@ -231,4 +233,35 @@ function addBoard() {
                    </section>`;
     boardContainer.insertAdjacentHTML("beforeend",board)
     }
+}
+
+function renameColumn() {
+    let columns = document.querySelectorAll('.board-column-title');
+    let columnTitleInput = `<input type="text" id="input">`;
+
+    for (let column of columns){
+        column.addEventListener('dblclick', function () {
+            let oldInput = column.innerHTML;
+            let oldColumnName = column.textContent;
+            column.innerHTML = columnTitleInput;
+            let titleInput = column.querySelector('#input');
+            titleInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter'){
+                    let boardId = column.dataset.boardId;
+                    renameColumnApi(boardId, titleInput.value, oldColumnName, renameInHTML)
+                }else if (e.key === 'Escape'){
+                    column.innerHTML = oldInput
+                }
+            })
+        });
+        function renameColumnApi(boardId, columnName, oldColName, callback) {
+            fetch(`/rename-column/${boardId}/${columnName}/${oldColName}`)
+                .then(response => response.json())
+                .then(data => callback(data, columnName))
+        }
+        function renameInHTML(data, columnName) {
+            column.innerHTML = columnName
+        }
+    }
+
 }
