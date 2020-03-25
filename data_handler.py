@@ -71,12 +71,6 @@ def get_statuses_for_specific_board(board_id):
             in persistence.get_all_cards_status_id_for_a_board(board_id)]
 
 
-# def get_cards_for_board(board_id):
-#     status_ids = persistence.all_status_ids_of_a_board(board_id)
-#     persistence.get_card_name_by_status_id(status_id, board_id)
-#     return
-
-
 def get_statuses_from_persistence():
 
     return persistence.get_statuses
@@ -108,16 +102,6 @@ def saving_new_board(board_name):
     last_card_for_new_board = persistence.get_last_card_by_board_id(board_id['id'])
     return last_card_for_new_board
 
-# def get_cards_for_board(board_id):
-#     persistence.clear_cache()
-#     all_cards = persistence.get_cards()
-#     matching_cards = []
-#     for card in all_cards:
-#         if card['board_id'] == str(board_id):
-#             card['status_id'] = get_card_status(card['status_id'])  # Set textual status for the card
-#             matching_cards.append(card)
-#     return matching_cards
-
 
 def rename_board(board_id, new_name_for_board):
     persistence.rename_board_sql(board_id, new_name_for_board)
@@ -140,3 +124,8 @@ def change_card_name_data_handler(card_id, new_name):
 
 def delete_card(card_id):
     persistence.delete_card_sql(card_id)
+
+
+def change_card_status(card_id, board_id, new_status_name):
+    status_id = persistence.get_status_by_name(new_status_name)
+    persistence.change_card_status(card_id, board_id, status_id['id'])
