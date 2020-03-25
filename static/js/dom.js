@@ -323,19 +323,24 @@ function deleteCard() {
 function changeStatus() {
     let cards = document.querySelectorAll('.card');
     let columns = document.querySelectorAll('.drop-zone');
-    for (let card of cards) {
-        card.addEventListener('drag', function () {
-            for (let column of columns) {
-                column.addEventListener('dragover', function (event) {
-                    event.preventDefault();
-                });
-                column.addEventListener('drop', function (event) {
-                    event.preventDefault();
-                    if (event.target !== card.parentNode && event.target !== card && event.target.classList.contains('board-column')) {
-                        card.parentNode.removeChild(card);
-                        event.target.appendChild(card);
-                    }
-                })
+    for (let card of cards){
+        card.addEventListener('dragstart', function () {
+            this.classList.add('active')
+        });
+        card.addEventListener('dragend', function () {
+            this.classList.remove('active')
+        })
+    }
+    for (let column of columns) {
+        column.addEventListener('dragover', function (event) {
+            event.preventDefault();
+        });
+        column.addEventListener('drop', function (event) {
+            let card = document.querySelector('.active');
+            event.preventDefault();
+            if (event.target !== card.parentNode && event.target !== card && event.target.classList.contains('board-column')) {
+                card.parentNode.removeChild(card);
+                event.target.appendChild(card);
             }
         })
     }
