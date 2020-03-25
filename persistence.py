@@ -55,9 +55,9 @@ def get_statuses(cursor):
 @database_common.connection_handler
 def get_all_cards_status_id_for_a_board(cursor, board_id):
     cursor.execute("""
-    SELECT DISTINCT status_id FROM cards
+    SELECT DISTINCT status_id, status_order FROM cards
     WHERE board_id = %(board_id)s
-    ORDER BY status_id
+    ORDER BY status_order
     """, {'board_id': board_id})
     return cursor.fetchall()
 
@@ -70,6 +70,7 @@ def get_card_status_board(cursor, board_id):
     JOIN statuses s on cards.status_id = s.id
     JOIN board b on cards.board_id = b.id
     WHERE board_id = %(board_id)s
+    ORDER BY "order"
     """, {'board_id': board_id})
     return cursor.fetchall()
 
@@ -88,7 +89,7 @@ def update_boardname(cursor, oldnameid, newname):
     cursor.execute("""UPDATE board
     SET title = %(newname)s
     WHERE id = %(oldnameid)s""",
-    {'oldnameid': oldnameid, 'newname': newname})
+                   {'oldnameid': oldnameid, 'newname': newname})
 
 
 @database_common.connection_handler
@@ -117,9 +118,11 @@ def add_new_status(cursor, status_name):
 
 
 @database_common.connection_handler
-def add_card_by_board_and_status(cursor, board_name, status_id):
-    cursor.execute("""INSERT INTO cards(board_id, title, status_id)
-    VALUES (%(board_name)s, 'New card', %(status_id)s)""", {'board_name': board_name, 'status_id': status_id})
+def add_card_by_board_and_status(cursor, board_id, status_id, status_order):
+    cursor.execute("""INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES (%(board_id)s, 'New card', %(status_id)s, 0, %(status_order)s)""", {'board_id': board_id,
+                                                                            'status_id': status_id,
+                                                                            'status_order': status_order})
 
 
 @database_common.connection_handler
@@ -139,11 +142,11 @@ def delete_board(cursor, board_id):
 
 
 @database_common.connection_handler
-def save_new_card(cursor, board_id):
+def save_new_card(cursor, board_id, order_number):
     cursor.execute("""
-        INSERT INTO cards (board_id, title, status_id)
-        VALUES (%(board_id)s, 'New Card', 1);
-        """, {'board_id': board_id})
+        INSERT INTO cards (board_id, title, status_id, "order")
+        VALUES (%(board_id)s, 'New Card', 1, %(order_number)s);
+        """, {'board_id': board_id, 'order_number': order_number})
 
 
 @database_common.connection_handler
@@ -167,16 +170,16 @@ def get_board_id_by_title(cursor, board_name):
 @database_common.connection_handler
 def add_default_status_to_new_board(cursor, board_id):
     cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
-    VALUES (%(board_id)s, 'New card', 1, false);
+    VALUES (%(board_id)s, 'New card', 1, 0);
 
     INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 2, false);
+    VALUES( %(board_id)s, 'New card', 2, 0);
     
     INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 3, false);
+    VALUES( %(board_id)s, 'New card', 3, 0);
     
     INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 4, false);
+    VALUES( %(board_id)s, 'New card', 4, 0);
     
     """, {'board_id': board_id})
 
@@ -246,3 +249,27 @@ def change_card_status(cursor, card_id, board_id, status_id):
     SET status_id = %(status_id)s, board_id = %(board_id)s
     WHERE id = %(card_id)s
     """, {'card_id': card_id, 'board_id': board_id, 'status_id': status_id})
+
+
+@database_common.connection_handler
+def get_highest_order(cursor, board_id):
+    cursor.execute("""
+    SELECT "order" as order_number
+    FROM cards
+    WHERE board_id = %(board_id)s AND status_id = 1
+    ORDER BY "order" DESC
+    LIMIT 1;
+    """, {'board_id': board_id})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_highest_status_order(cursor, board_id):
+    cursor.execute("""
+    SELECT status_order
+    FROM cards
+    WHERE board_id = %(board_id)s
+    ORDER BY status_order DESC
+    LIMIT 1;
+    """, {'board_id': board_id})
+    return cursor.fetchone()
