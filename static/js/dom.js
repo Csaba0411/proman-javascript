@@ -31,18 +31,18 @@ export let dom = {
             for (let stat of board['status']) {
                 if (stat === 'new') {
                     boardList +=
-                        `<div class="board-column column-for-new-cards" data-board-id="${board['id']}">
+                        `<div class="board-column column-for-new-cards drop-zone" data-board-id="${board['id']}">
                         <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>
                         <div class="board-column-content">`;
                 } else {
                     boardList +=
-                        `<div class="board-column">
+                        `<div class="board-column drop-zone">
                         <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>
                         <div class="board-column-content">`;
                 }
                 for (let card of board[stat]) {
                     boardList +=
-                        `<div class="card">
+                        `<div class="card" draggable="true">
                             <div class="card-remove" data-card-id="${card[1]}"><i class="fas fa-trash-alt"></i></div>
                             <div class="card-title" data-card-id="${card[1]}">${card[0]}</div>
                         </div>`
@@ -72,6 +72,7 @@ export let dom = {
         renameColumn();
         renameCards();
         deleteCard();
+        changeStatus();
     },
     loadCards: function (boardId) {
         // retrieves cards and makes showCards called
@@ -179,7 +180,7 @@ function addCard() {
         let boardId = addButton.dataset.boardId;
         let allCardContainer = document.getElementsByClassName('column-for-new-cards');
         let newCard =
-            `<div class="card">
+            `<div class="card" draggable="true">
                     <div class="card-remove" data-card-id="${data}"><i class="fas fa-trash-alt"></i></div>
                     <div class="card-title" data-card-id="${data}">New Card</div>
                 </div>`;
@@ -220,11 +221,11 @@ function addBoard() {
             if (stats === 'new') {
                 board += `<div class="board-column column-for-new-cards" data-board-id="${data['board_id']}">`
             } else {
-                board += `<div class="board-column" data-board-id="${data['board_id']}">`
+                board += `<div class="board-column drop-zone" data-board-id="${data['board_id']}">`
             }
             board += `<div class="board-column-title" data-board-id="${data['board_id']}">${stats}</div>
                         <div class="board-column-content">
-                            <div class="card">
+                            <div class="card" draggable="true">
                             <div class="card-remove" data-card-id="${firstCardId}"><i class="fas fa-trash-alt"></i></div>
                             <div class="card-title" data-card-id="${firstCardId}">New card</div>
         </div>
@@ -312,8 +313,30 @@ function deleteCard() {
             .then(response => response.json())
             .then(data => callback(trash, data))
     }
-    function removeCardHTML(trash, data){
+
+    function removeCardHTML(trash, data) {
         let card = trash.parentNode;
         card.remove();
+    }
+}
+
+function changeStatus() {
+    let cards = document.querySelectorAll('.card');
+    let columns = document.querySelectorAll('.drop-zone');
+    for (let card of cards) {
+        card.addEventListener('drag', function () {
+            for (let column of columns) {
+                column.addEventListener('dragover', function (event) {
+                    event.preventDefault();
+                });
+                column.addEventListener('drop', function (event) {
+                    event.preventDefault();
+                    if (event.target !== card.parentNode && event.target !== card && event.target.classList.contains('board-column')) {
+                        card.parentNode.removeChild(card);
+                        event.target.appendChild(card);
+                    }
+                })
+            }
+        })
     }
 }
