@@ -63,6 +63,7 @@ def get_boards():
         board['status'] = get_statuses_for_specific_board(board['id'])
         for stat in board['status']:
             board[stat] = [(card['card'], card['card_id']) for card in cards if card['status'] == stat]
+
     return all_board
 
 
@@ -96,8 +97,11 @@ def saving_new_card(board_id):
     return persistence.save_new_card(board_id, int(highest_order['order_number']) + 1)
 
 
-def saving_new_board(board_name):
-    persistence.add_new_board(board_name)
+def saving_new_board(board_name, user_id):
+    if user_id == '0':
+        persistence.add_new_board_without_id(board_name)
+    else:
+        persistence.add_new_board(board_name, user_id)
     board_id = persistence.get_board_id_by_title(board_name)
     persistence.add_default_status_to_new_board(board_id['id'])
     last_card_for_new_board = persistence.get_last_card_by_board_id(board_id['id'])
@@ -130,3 +134,8 @@ def delete_card(card_id):
 def change_card_status(card_id, board_id, new_status_name):
     status_id = persistence.get_status_by_name(new_status_name)
     persistence.change_card_status(card_id, board_id, status_id['id'])
+
+
+def get_user_id_by_user_name(user_name):
+    user_id = persistence.get_user_id_by_user_name(user_name)
+    return user_id['id']
