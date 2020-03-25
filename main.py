@@ -115,6 +115,12 @@ def delete_card(card_id):
     data_handler.delete_card(card_id)
 
 
+@app.route('/change-card-status/<card_id>/<board_id>/<new_card_status>')
+@json_response
+def change_card_status(card_id, board_id, new_card_status):
+    data_handler.change_card_status(card_id, board_id, new_card_status)
+
+
 def main():
     app.run(debug=True)
 
