@@ -4,7 +4,7 @@ import database_common
 @database_common.connection_handler
 def collect_all_board(cursor):
     cursor.execute("""
-        SELECT id, title
+        SELECT id, title, user_id
         FROM board
         ORDER BY id;
     """)
@@ -150,11 +150,11 @@ def save_new_card(cursor, board_id, order_number):
 
 
 @database_common.connection_handler
-def add_new_board(cursor, board_name):
+def add_new_board(cursor, board_name, user_id):
     cursor.execute("""
-    INSERT INTO board (title)
-    VALUES (%(board_name)s)
-    """, {'board_name': board_name})
+    INSERT INTO board (title, user_id)
+    VALUES (%(board_name)s, %(user_id)s)
+    """, {'board_name': board_name, 'user_id': user_id})
 
 
 @database_common.connection_handler
@@ -273,3 +273,21 @@ def get_highest_status_order(cursor, board_id):
     LIMIT 1;
     """, {'board_id': board_id})
     return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_user_id_by_user_name(cursor, user_name):
+    cursor.execute("""
+    SELECT id
+    FROM users
+    WHERE name = %(user_name)s
+    """, {'user_name': user_name})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def add_new_board_without_id(cursor, board_name):
+    cursor.execute("""
+    INSERT INTO board (title)
+    VALUES (%(board_name)s)
+    """, {'board_name': board_name})
