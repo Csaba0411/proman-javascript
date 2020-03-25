@@ -13,6 +13,8 @@ def index():
     if request.method == 'POST':
         if data_handler.get_login_data(request.form, session) is False:
             invalid = 'Your username or password is invalid!'
+        else:
+            return redirect('/')
     return render_template('index.html', invalid_input=invalid, session=session)
 
 
@@ -69,10 +71,10 @@ def rename_board(board_id, new_name_for_board):
     return new_name_for_board
 
 
-@app.route("/save-new-board/<board_name>")
+@app.route("/save-new-board/<board_name>/<user_id>")
 @json_response
-def save_new_board(board_name):
-    card_ids_with_board_id = data_handler.saving_new_board(board_name)
+def save_new_board(board_name, user_id):
+    card_ids_with_board_id = data_handler.saving_new_board(board_name, user_id)
     return card_ids_with_board_id
 
 
@@ -119,6 +121,12 @@ def delete_card(card_id):
 @json_response
 def change_card_status(card_id, board_id, new_card_status):
     data_handler.change_card_status(card_id, board_id, new_card_status)
+
+
+@app.route('/user-name/<user_name>')
+@json_response
+def user_id_for_name(user_name):
+    return data_handler.get_user_id_by_user_name(user_name)
 
 
 def main():
