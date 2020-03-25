@@ -72,7 +72,6 @@ def get_statuses_for_specific_board(board_id):
 
 
 def get_statuses_from_persistence():
-
     return persistence.get_statuses
 
 
@@ -81,10 +80,11 @@ def update_with_boardname(oldname, newname):
     persistence.update_boardname(oldnameid['id'], newname)
 
 
-def add_new_status(board_name, status_name):
+def add_new_status(board_id, status_name):
+    latest_status_order = persistence.get_highest_status_order(board_id)
     persistence.add_new_status(status_name)
     status_id = persistence.get_status_by_name(status_name)
-    persistence.add_card_by_board_and_status(board_name, status_id['id'])
+    persistence.add_card_by_board_and_status(board_id, status_id['id'], int(latest_status_order['status_order']) + 1)
 
 
 def delete_board(board_id):
@@ -92,7 +92,8 @@ def delete_board(board_id):
 
 
 def saving_new_card(board_id):
-    return persistence.save_new_card(board_id)
+    highest_order = persistence.get_highest_order(board_id)
+    return persistence.save_new_card(board_id, int(highest_order['order_number']) + 1)
 
 
 def saving_new_board(board_name):
