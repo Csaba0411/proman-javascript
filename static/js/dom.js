@@ -16,10 +16,11 @@ export let dom = {
     showBoards: function (boards) {
         // shows boards appending them to #boards div
         // it adds necessary event listeners also
-
+        saveUserId();
         let boardList = '';
         for (let board of boards) {
-            boardList += `
+            if (board['user_id'] === null || Number(board['user_id']) === Number(localStorage.getItem('userId'))) {
+                boardList += `
                 <section class="board">
                 <div class="board-header"><button class="board-title" data-board-id="${board['id']}">${board.title}</button>
                 <button class="board-add add-card" data-board-id="${board['id']}">Add Card</button>
@@ -28,30 +29,31 @@ export let dom = {
                 <div class="board-toggle"><i class="fas fa-trash-alt board-delete" data-board-id="${board['id']}"></i></div>
                 </div>
                 <div class="board-columns">`;
-            for (let stat of board['status']) {
-                if (stat === 'new') {
-                    boardList +=
-                        `<div class="board-column column-for-new-cards drop-zone" data-board-id="${board['id']}">
+                for (let stat of board['status']) {
+                    if (stat === 'new') {
+                        boardList +=
+                            `<div class="board-column column-for-new-cards drop-zone" data-board-id="${board['id']}">
                         <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>`;
-                } else {
-                    boardList +=
-                        `<div class="board-column drop-zone" data-board-id="${board['id']}">
+                    } else {
+                        boardList +=
+                            `<div class="board-column drop-zone" data-board-id="${board['id']}">
                         <div class="board-column-title" data-board-id="${board['id']}">${stat}</div>`;
-                }
-                for (let card of board[stat]) {
-                    boardList +=
-                        `<div class="card" draggable="true" data-card-id="${card[1]}">
+                    }
+                    for (let card of board[stat]) {
+                        boardList +=
+                            `<div class="card" draggable="true" data-card-id="${card[1]}">
                             <div class="card-remove" data-card-id="${card[1]}"><i class="fas fa-trash-alt"></i></div>
                             <div class="card-title" data-card-id="${card[1]}">${card[0]}</div>
                         </div>`
 
+                    }
+                    boardList +=
+                        `</div>`;
                 }
                 boardList +=
-                    `</div>`;
-            }
-            boardList +=
-                `</div>
+                    `</div>
                      </section>`
+            }
         }
         const outerHtml = `
             <div class="board-container">
@@ -185,11 +187,18 @@ function addBoard() {
     let plusSign = document.querySelector('#plus-sign');
     plusSign.addEventListener('click', function () {
         let newBoardName = prompt('Board name: ');
-        addBoardApi(newBoardName, insertNewBoard)
+        addBoardApi(newBoardName, '0', insertNewBoard)
     });
+    let privateButton = document.querySelector('#create-private-board');
+    if (privateButton) {
+        privateButton.addEventListener('click', function (event) {
+            let newBoardName = prompt('Board name: ');
+            addBoardApi(newBoardName, localStorage.getItem('userId'), insertNewBoard)
+        });
+    }
 
-    function addBoardApi(boardName, callback) {
-        fetch(`/save-new-board/${boardName}`)
+    function addBoardApi(boardName, userId, callback) {
+        fetch(`/save-new-board/${boardName}/${userId}`)
             .then(promise => promise.json())
             .then(data => callback(data, boardName))
     }
@@ -337,5 +346,25 @@ function changeStatus() {
     function sendStatusChangeApi(cardId, boardId, newStatus) {
         fetch(`/change-card-status/${cardId}/${boardId}/${newStatus}`)
             .then(response => response.json())
+    }
+}
+
+function saveUserId() {
+    let userName = document.querySelector('#user');
+    if (userName.textContent !== '') {
+        userName = userName.textContent.replace('Logged in: ', '');
+        sendUserName(userName, storeInLocal)
+    } else {
+        localStorage.removeItem('userId');
+    }
+
+    function sendUserName(userName, callback) {
+        fetch(`/user-name/${userName}`)
+            .then(response => response.json())
+            .then(data => callback(data))
+    }
+
+    function storeInLocal(data) {
+        localStorage.setItem('userId', data);
     }
 }
