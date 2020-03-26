@@ -184,6 +184,7 @@ function addNewCardHTML(data, addButton) {
         }
     }
     deleteCard();
+    changeStatus();
 }
 
 
