@@ -137,3 +137,8 @@ section.board{
     top: 3%;
     right: 3%;
 }
+
+#registration-place{
+    margin-top: 10%;
+    text-align: center;
+}
