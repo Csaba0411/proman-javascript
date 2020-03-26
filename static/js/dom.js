@@ -252,7 +252,7 @@ function addBoard() {
 
 function renameColumn() {
     let columns = document.querySelectorAll('.board-column-title');
-    let columnTitleInput = `<input type="text" id="input">`;
+    let columnTitleInput = `<input type="text" id="input" autocomplete="off">`;
 
     for (let column of columns) {
         column.addEventListener('dblclick', function () {
