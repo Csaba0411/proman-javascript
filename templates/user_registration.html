@@ -9,22 +9,34 @@
           integrity="sha384-rdyFrfAIC05c5ph7BKz3l5NG5yEottvO/DQ0dCrwD8gzeQDjYBHNr1ucUpQuljos" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css"
           integrity="sha384-u5J7JghGz0qUrmEsWzBQkfvc8nK3fUT7DCaQzNQ+q4oEXhGSx+P2OqjWsfIRB8QT" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96"
+          href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
 <h1>Register</h1>
-<form autocomplete="off" action="/registration" method="post">
-    <h3>Enter your Username here:</h3>
-    <input class="input_format" type="text" name="username" required>
-    <h3>Enter your Password here:</h3>
-    <input class="password" type="password" name="password" required>
-    <h3>Enter your Password again:</h3>
-    <input class="password" type="password" name="password_again" required> <br> <br>
-    <input class="button" type="submit" value="Register!">
-    <input id="checkbox" type="checkbox">Show Password
-</form>
-<br>
-<div class="error">
-    {{ error if error }}
+<div id="registration-place">
+    <form autocomplete="off" action="/registration" method="post">
+        <h6>Enter your Username here:</h6>
+        <input class="input_format" type="text" name="username" required>
+        <h6>Enter your Password here:</h6>
+        <input class="password" type="password" name="password" required>
+        <h6>Enter your Password again:</h6>
+        <input class="password" type="password" name="password_again" required> <br> <br>
+        <input class="button" type="submit" value="Register!">
+        <input id="checkbox" type="checkbox">Show Password
+    </form>
+    <br>
+    <div class="error">
+        {{ error if error }}
+    </div>
 </div>
 </body>
 </html>
