@@ -45,7 +45,6 @@ export let dom = {
                             <div class="card-remove" data-card-id="${card[1]}"><i class="fas fa-trash-alt"></i></div>
                             <div class="card-title" data-card-id="${card[1]}">${card[0]}</div>
                         </div>`
-
                     }
                     boardList +=
                         `</div>`;
