@@ -3,6 +3,7 @@ import {dataHandler} from "./data_handler.js";
 
 export let dom = {
     init: function () {
+        saveUserId();
         addBoard();
     },
     loadBoards: function () {
@@ -16,7 +17,6 @@ export let dom = {
     showBoards: function (boards) {
         // shows boards appending them to #boards div
         // it adds necessary event listeners also
-        saveUserId();
         let boardList = '';
         for (let board of boards) {
             if (board['user_id'] === null || Number(board['user_id']) === Number(localStorage.getItem('userId'))) {
