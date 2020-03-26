@@ -144,8 +144,8 @@ def delete_board(cursor, board_id):
 @database_common.connection_handler
 def save_new_card(cursor, board_id, order_number):
     cursor.execute("""
-        INSERT INTO cards (board_id, title, status_id, "order")
-        VALUES (%(board_id)s, 'New Card', 1, %(order_number)s);
+        INSERT INTO cards (board_id, title, status_id, "order", status_order)
+        VALUES (%(board_id)s, 'New Card', 1, %(order_number)s, 0);
         """, {'board_id': board_id, 'order_number': order_number})
 
 
@@ -169,17 +169,17 @@ def get_board_id_by_title(cursor, board_name):
 
 @database_common.connection_handler
 def add_default_status_to_new_board(cursor, board_id):
-    cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
-    VALUES (%(board_id)s, 'New card', 1, 0);
+    cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order", status_order)
+    VALUES (%(board_id)s, 'New card', 1, 0, 0);
 
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 2, 0);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 2, 0, 1);
     
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 3, 0);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 3, 0, 2);
     
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 4, 0);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 4, 0, 3);
     
     """, {'board_id': board_id})
 
@@ -291,3 +291,15 @@ def add_new_board_without_id(cursor, board_name):
     INSERT INTO board (title)
     VALUES (%(board_name)s)
     """, {'board_name': board_name})
+
+
+@database_common.connection_handler
+def get_highest_order_at_given_status(cursor, board_id, status_id):
+    cursor.execute("""
+    SELECT "order", status_order
+    FROM cards
+    WHERE board_id = %(board_id)s AND status_id = %(status_id)s
+    ORDER BY "order" DESC
+    LIMIT 1
+    """, {'board_id': board_id, 'status_id': status_id})
+    return cursor.fetchone()
