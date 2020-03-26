@@ -80,9 +80,9 @@ def get_statuses_from_persistence():
     return persistence.get_statuses
 
 
-def update_with_boardname(oldname, newname):
-    oldnameid = persistence.get_board_id_by_name(oldname)
-    persistence.update_boardname(oldnameid['id'], newname)
+def update_with_boardname(old_name, new_name):
+    old_name_id = persistence.get_board_id_by_name(old_name)
+    persistence.update_boardname(old_name_id['id'], new_name)
 
 
 def add_new_status(board_id, status_name):
