@@ -27,18 +27,18 @@
 <body>
 <div>
     {% if not session.username %}
-    <div id="registration"><a href="/registration">Registration</a></div>
-    <form action="/" name="login" autocomplete="off" method="post">
-        <input type="text" placeholder="Username" name="user"><br>
-        <input class="password" type="password" placeholder="Password" name="password">
-        <input id="checkbox" type="checkbox">Show Password
-        <br>
-    </form>
-    {% else %}
-    <form action="/logout" name="logout" method="get">
-        {% endif %}
-        <p>{{ 'Logged in: '+session.username if session.username else '' }}</p>
-        <input type="submit" value="{{ 'Log out' if session.username else 'Log in' }}">
+        <div id="registration"><a href="/registration">Registration</a></div>
+        <form action="/" name="login" autocomplete="off" method="post">
+            <input type="text" placeholder="Username" name="user"><br>
+            <input class="password" type="password" placeholder="Password" name="password">
+            <input id="checkbox" type="checkbox">Show Password
+            <br>
+            {% else %}
+        </form>
+        <form action="/logout" name="logout" method="get">
+    {% endif %}
+    <p id="user">{{ 'Logged in: '+ session.username if session.username else '' }}</p>
+    <input type="submit" value="{{ 'Log out' if session.username else 'Log in' }}">
     </form>
     <br>
 </div>
@@ -46,7 +46,10 @@
     {{ invalid_input }}
 </div>
 <h1>ProMan</h1>
+{% if session.username %}
+    <button id="create-private-board">Create private board</button>
+{% endif %}
+<button id="plus-sign">Create public board</button>
 <div id="boards"></div>
-<img src="/static/img/plus.png" id="plus-sign">
 </body>
 </html>

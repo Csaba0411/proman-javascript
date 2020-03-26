@@ -27,8 +27,9 @@ CREATE TABLE cards
     board_id  integer,
     title     text,
     status_id integer,
-    "order"   boolean,
-    user_id   integer
+    "order"   integer,
+    user_id   integer,
+    status_order integer
 );
 
 DROP TABLE IF EXISTS public.statuses;
@@ -81,28 +82,28 @@ VALUES ('testing');
 INSERT INTO statuses (title)
 VALUES ('done');
 
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'new card 1', 1, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'new card 2', 1, true);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'in progress card', 2, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'planning', 3, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'done card 1', 4, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (1, 'done card 1', 4, true);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'new card 1', 1, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'new card 2', 1, true);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'in progress card', 2, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'planning', 3, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'done card 1', 4, false);
-INSERT INTO cards (board_id, title, status_id, "order")
-VALUES (2, 'done card 1', 4, true);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'new card 1', 1, 0, 0);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'new card 2', 1, 1, 0);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'in progress card', 2, 0, 1);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'planning', 3, 0, 2);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'done card 1', 4, 0, 3);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (1, 'done card 1', 4, 1, 3);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'new card 1', 1, 0, 0);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'new card 2', 1, 1, 0);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'in progress card', 2, 0, 1);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'planning', 3, 0, 2);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'done card 1', 4, 0, 3);
+INSERT INTO cards (board_id, title, status_id, "order", status_order)
+VALUES (2, 'done card 1', 4, 1, 3);
 

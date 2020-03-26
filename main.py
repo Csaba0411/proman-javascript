@@ -13,6 +13,8 @@ def index():
     if request.method == 'POST':
         if data_handler.get_login_data(request.form, session) is False:
             invalid = 'Your username or password is invalid!'
+        else:
+            return redirect('/')
     return render_template('index.html', invalid_input=invalid, session=session)
 
 
@@ -69,30 +71,62 @@ def rename_board(board_id, new_name_for_board):
     return new_name_for_board
 
 
-@app.route("/save-new-board/<board_name>")
+@app.route("/save-new-board/<board_name>/<user_id>")
 @json_response
-def save_new_board(board_name):
-    board_id = data_handler.saving_new_board(board_name)
-    return board_id
+def save_new_board(board_name, user_id):
+    card_ids_with_board_id = data_handler.saving_new_board(board_name, user_id)
+    return card_ids_with_board_id
 
 
 @app.route("/save-new-card/<board_id>")
 @json_response
 def save_new_card(board_id):
     data_handler.saving_new_card(board_id)
+    card_id = data_handler.get_last_card()
+    return card_id['id']
 # Day 14 in quarantine: still Áron is my favourite man
 
 
-@app.route('/new-status/<board_name>/<status_name>')
+@app.route('/new-status/<board_id>/<status_name>')
 @json_response
-def new_status(board_name, status_name):
-    data_handler.add_new_status(board_name, status_name)
+def new_status(board_id, status_name):
+    data_handler.add_new_status(board_id, status_name)
 
 
 @app.route('/delete/<board_id>')
 @json_response
 def delete_board(board_id):
     data_handler.delete_board(board_id)
+
+
+@app.route('/rename-column/<board_id>/<column_name>/<old_col_name>')
+@json_response
+def rename_column(board_id, column_name, old_col_name):
+    data_handler.rename_column(board_id, column_name, old_col_name)
+
+
+@app.route('/rename-card/<card_id>/<new_name>')
+@json_response
+def rename_card(card_id, new_name):
+    data_handler.change_card_name_data_handler(card_id, new_name)
+
+
+@app.route('/delete-card/<card_id>')
+@json_response
+def delete_card(card_id):
+    data_handler.delete_card(card_id)
+
+
+@app.route('/change-card-status/<card_id>/<board_id>/<new_card_status>')
+@json_response
+def change_card_status(card_id, board_id, new_card_status):
+    data_handler.change_card_status(card_id, board_id, new_card_status)
+
+
+@app.route('/user-name/<user_name>')
+@json_response
+def user_id_for_name(user_name):
+    return data_handler.get_user_id_by_user_name(user_name)
 
 
 def main():

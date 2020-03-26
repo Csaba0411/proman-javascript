@@ -4,7 +4,7 @@ import database_common
 @database_common.connection_handler
 def collect_all_board(cursor):
     cursor.execute("""
-        SELECT id, title
+        SELECT id, title, user_id
         FROM board
         ORDER BY id;
     """)
@@ -42,15 +42,6 @@ def get_login_data(cursor, username):
         data = datadict
         return data
 
-# @database_common.connection_handler
-# def get_cards_by_board_id(cursor, board_id):
-#     cursor.execute("""
-#     SELECT title
-#     FROM cards
-#     WHERE board_id = %(board_id)s
-#     """, {'board_id': board_id})
-#     return cursor.fetchall()
-
 
 @database_common.connection_handler
 def get_statuses(cursor):
@@ -64,9 +55,9 @@ def get_statuses(cursor):
 @database_common.connection_handler
 def get_all_cards_status_id_for_a_board(cursor, board_id):
     cursor.execute("""
-    SELECT DISTINCT status_id FROM cards
+    SELECT DISTINCT status_id, status_order FROM cards
     WHERE board_id = %(board_id)s
-    ORDER BY status_id
+    ORDER BY status_order
     """, {'board_id': board_id})
     return cursor.fetchall()
 
@@ -74,11 +65,12 @@ def get_all_cards_status_id_for_a_board(cursor, board_id):
 @database_common.connection_handler
 def get_card_status_board(cursor, board_id):
     cursor.execute("""
-    SELECT cards.title as card, s.title as status, b.title as board
+    SELECT cards.id as card_id, cards.title as card, s.title as status, b.title as board
     FROM cards
     JOIN statuses s on cards.status_id = s.id
     JOIN board b on cards.board_id = b.id
     WHERE board_id = %(board_id)s
+    ORDER BY "order"
     """, {'board_id': board_id})
     return cursor.fetchall()
 
@@ -97,7 +89,7 @@ def update_boardname(cursor, oldnameid, newname):
     cursor.execute("""UPDATE board
     SET title = %(newname)s
     WHERE id = %(oldnameid)s""",
-    {'oldnameid': oldnameid, 'newname': newname})
+                   {'oldnameid': oldnameid, 'newname': newname})
 
 
 @database_common.connection_handler
@@ -126,9 +118,11 @@ def add_new_status(cursor, status_name):
 
 
 @database_common.connection_handler
-def add_card_by_board_and_status(cursor, board_name, status_id):
-    cursor.execute("""INSERT INTO cards(board_id, title, status_id)
-    VALUES (%(board_name)s, 'New card', %(status_id)s)""", {'board_name': board_name, 'status_id': status_id})
+def add_card_by_board_and_status(cursor, board_id, status_id, status_order):
+    cursor.execute("""INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES (%(board_id)s, 'New card', %(status_id)s, 0, %(status_order)s)""", {'board_id': board_id,
+                                                                            'status_id': status_id,
+                                                                            'status_order': status_order})
 
 
 @database_common.connection_handler
@@ -148,19 +142,19 @@ def delete_board(cursor, board_id):
 
 
 @database_common.connection_handler
-def save_new_card(cursor, board_id):
+def save_new_card(cursor, board_id, order_number):
     cursor.execute("""
-        INSERT INTO cards (board_id, title, status_id)
-        VALUES (%(board_id)s, 'New Card', 1);
-        """, {'board_id': board_id})
+        INSERT INTO cards (board_id, title, status_id, "order", status_order)
+        VALUES (%(board_id)s, 'New Card', 1, %(order_number)s, 0);
+        """, {'board_id': board_id, 'order_number': order_number})
 
 
 @database_common.connection_handler
-def add_new_board(cursor, board_name):
+def add_new_board(cursor, board_name, user_id):
     cursor.execute("""
-    INSERT INTO board (title)
-    VALUES (%(board_name)s)
-    """, {'board_name': board_name})
+    INSERT INTO board (title, user_id)
+    VALUES (%(board_name)s, %(user_id)s)
+    """, {'board_name': board_name, 'user_id': user_id})
 
 
 @database_common.connection_handler
@@ -175,17 +169,17 @@ def get_board_id_by_title(cursor, board_name):
 
 @database_common.connection_handler
 def add_default_status_to_new_board(cursor, board_id):
-    cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order")
-    VALUES (%(board_id)s, 'New card', 1, false);
+    cursor.execute("""INSERT INTO cards (board_id, title, status_id, "order", status_order)
+    VALUES (%(board_id)s, 'New card', 1, 0, 0);
 
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 2, false);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 2, 0, 1);
     
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 3, false);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 3, 0, 2);
     
-    INSERT INTO cards(board_id, title, status_id, "order")
-    VALUES( %(board_id)s, 'New card', 4, false);
+    INSERT INTO cards(board_id, title, status_id, "order", status_order)
+    VALUES( %(board_id)s, 'New card', 4, 0, 3);
     
     """, {'board_id': board_id})
 
@@ -199,34 +193,113 @@ def rename_board_sql(cursor, board_id, board_name):
     """, {'board_name': board_name, 'board_id': board_id})
 
 
-# _cache = {}  # We store cached data in this dict to avoid multiple file readings
-#
-#
-# def _get_data(data_type, file, force):
-#     """
-#     Reads defined type of data from file or cache
-#     :param data_type: key where the data is stored in cache
-#     :param file: relative path to data file
-#     :param force: if set to True, cache will be ignored
-#     :return: OrderedDict
-#     """
-#     if force or data_type not in _cache:
-#         _cache[data_type] = _read_csv(file)
-#     return _cache[data_type]
-#
-#
-# def clear_cache():
-#     for k in list(_cache.keys()):
-#         _cache.pop(k)
-#
-#
-# def get_statuses(force=False):
-#     return _get_data('statuses', STATUSES_FILE, force)
-#
-#
-# def get_boards(force=False):
-#     return _get_data('boards', BOARDS_FILE, force)
-#
-#
-# def get_cards(force=False):
-#     return _get_data('cards', CARDS_FILE, force)
+@database_common.connection_handler
+def rename_column(cursor, board_id, status_id, old_status_id):
+    cursor.execute("""
+    UPDATE cards
+    SET status_id = %(status_id)s
+    WHERE board_id = %(board_id)s AND status_id = %(old_status_id)s
+    """, {"board_id": board_id, "status_id": status_id, "old_status_id": old_status_id})
+
+
+@database_common.connection_handler
+def get_last_card(cursor):
+    cursor.execute("""
+    SELECT id
+    FROM cards
+    ORDER BY id DESC
+    LIMIT 1;
+    """)
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def change_card_name(cursor, card_id, new_name):
+    cursor.execute("""
+    UPDATE cards
+    SET title = %(new_name)s
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id, 'new_name': new_name})
+
+
+@database_common.connection_handler
+def get_last_card_by_board_id(cursor, board_id):
+    cursor.execute("""
+    SELECT id, board_id
+    FROM cards
+    WHERE board_id = %(board_id)s
+    ORDER BY id
+    LIMIT 1  
+    """, {'board_id': board_id})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def delete_card_sql(cursor, card_id):
+    cursor.execute("""
+    DELETE FROM cards
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id})
+
+
+@database_common.connection_handler
+def change_card_status(cursor, card_id, board_id, status_id):
+    cursor.execute("""
+    UPDATE cards
+    SET status_id = %(status_id)s, board_id = %(board_id)s
+    WHERE id = %(card_id)s
+    """, {'card_id': card_id, 'board_id': board_id, 'status_id': status_id})
+
+
+@database_common.connection_handler
+def get_highest_order(cursor, board_id):
+    cursor.execute("""
+    SELECT "order" as order_number
+    FROM cards
+    WHERE board_id = %(board_id)s AND status_id = 1
+    ORDER BY "order" DESC
+    LIMIT 1;
+    """, {'board_id': board_id})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_highest_status_order(cursor, board_id):
+    cursor.execute("""
+    SELECT status_order
+    FROM cards
+    WHERE board_id = %(board_id)s
+    ORDER BY status_order DESC
+    LIMIT 1;
+    """, {'board_id': board_id})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def get_user_id_by_user_name(cursor, user_name):
+    cursor.execute("""
+    SELECT id
+    FROM users
+    WHERE name = %(user_name)s
+    """, {'user_name': user_name})
+    return cursor.fetchone()
+
+
+@database_common.connection_handler
+def add_new_board_without_id(cursor, board_name):
+    cursor.execute("""
+    INSERT INTO board (title)
+    VALUES (%(board_name)s)
+    """, {'board_name': board_name})
+
+
+@database_common.connection_handler
+def get_highest_order_at_given_status(cursor, board_id, status_id):
+    cursor.execute("""
+    SELECT "order", status_order
+    FROM cards
+    WHERE board_id = %(board_id)s AND status_id = %(status_id)s
+    ORDER BY "order" DESC
+    LIMIT 1
+    """, {'board_id': board_id, 'status_id': status_id})
+    return cursor.fetchone()

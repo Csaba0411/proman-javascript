@@ -35,13 +35,13 @@ def adding_registration_data(registration_data):
     persistence.save_registration_data(hashed_password, registration_data["username"], dt)
 
 
-def get_login_data(login_data, cookiedata):
+def get_login_data(login_data, cookie_data):
     login = persistence.get_login_data(login_data['user'])
     if not login:
         return False
     if login_data['user'] == login['name'] and verify_password(login_data['password'], login['password']) is True:
-        cookiedata['username'] = login_data['user']
-        cookiedata['logged_in_id'] = login['id']
+        cookie_data['username'] = login_data['user']
+        cookie_data['logged_in_id'] = login['id']
         return True
     return False
 
@@ -62,35 +62,29 @@ def get_boards():
         cards = persistence.get_card_status_board(board['id'])
         board['status'] = get_statuses_for_specific_board(board['id'])
         for stat in board['status']:
-            board[stat] = [card['card'] for card in cards if card['status'] == stat]
+            board[stat] = [(card['card'], card['card_id']) for card in cards if card['status'] == stat]
     return all_board
 
 
 def get_statuses_for_specific_board(board_id):
-    return [persistence.get_status_title_by_id(card_status['status_id'])['title'] for card_status
-            in persistence.get_all_cards_status_id_for_a_board(board_id)]
-
-
-# def get_cards_for_board(board_id):
-#     status_ids = persistence.all_status_ids_of_a_board(board_id)
-#     persistence.get_card_name_by_status_id(status_id, board_id)
-#     return
+    status_titles = []
+    cards_for_this_board = persistence.get_all_cards_status_id_for_a_board(board_id)
+    for card in cards_for_this_board:
+        card_title = persistence.get_status_title_by_id(card['status_id'])
+        if card_title['title'] not in status_titles:
+            status_titles.append(card_title['title'])
+    return status_titles
 
 
 def get_statuses_from_persistence():
-
     return persistence.get_statuses
 
 
-def update_with_boardname(oldname, newname):
-    oldnameid = persistence.get_board_id_by_name(oldname)
-    persistence.update_boardname(oldnameid['id'], newname)
-
-
-def add_new_status(board_name, status_name):
+def add_new_status(board_id, status_name):
+    latest_status_order = persistence.get_highest_status_order(board_id)
     persistence.add_new_status(status_name)
     status_id = persistence.get_status_by_name(status_name)
-    persistence.add_card_by_board_and_status(board_name, status_id['id'])
+    persistence.add_card_by_board_and_status(board_id, status_id['id'], int(latest_status_order['status_order']) + 1)
 
 
 def delete_board(board_id):
@@ -98,25 +92,49 @@ def delete_board(board_id):
 
 
 def saving_new_card(board_id):
-    return persistence.save_new_card(board_id)
+    highest_order = persistence.get_highest_order(board_id)
+    return persistence.save_new_card(board_id, int(highest_order['order_number']) + 1)
 
 
-def saving_new_board(board_name):
-    persistence.add_new_board(board_name)
+def saving_new_board(board_name, user_id):
+    if user_id == '0':
+        persistence.add_new_board_without_id(board_name)
+    else:
+        persistence.add_new_board(board_name, user_id)
     board_id = persistence.get_board_id_by_title(board_name)
     persistence.add_default_status_to_new_board(board_id['id'])
-    return board_id['id']
-
-# def get_cards_for_board(board_id):
-#     persistence.clear_cache()
-#     all_cards = persistence.get_cards()
-#     matching_cards = []
-#     for card in all_cards:
-#         if card['board_id'] == str(board_id):
-#             card['status_id'] = get_card_status(card['status_id'])  # Set textual status for the card
-#             matching_cards.append(card)
-#     return matching_cards
+    last_card_for_new_board = persistence.get_last_card_by_board_id(board_id['id'])
+    return last_card_for_new_board
 
 
 def rename_board(board_id, new_name_for_board):
     persistence.rename_board_sql(board_id, new_name_for_board)
+
+
+def rename_column(board_id, column_name, old_col_name):
+    persistence.add_new_status(column_name)
+    status_id = persistence.get_status_by_name(column_name)
+    old_status_id = persistence.get_status_by_name(old_col_name)
+    persistence.rename_column(board_id, status_id['id'], old_status_id['id'])
+
+
+def get_last_card():
+    return persistence.get_last_card()
+
+
+def change_card_name_data_handler(card_id, new_name):
+    persistence.change_card_name(card_id, new_name)
+
+
+def delete_card(card_id):
+    persistence.delete_card_sql(card_id)
+
+
+def change_card_status(card_id, board_id, new_status_name):
+    status_id = persistence.get_status_by_name(new_status_name)
+    persistence.change_card_status(card_id, board_id, status_id['id'])
+
+
+def get_user_id_by_user_name(user_name):
+    user_id = persistence.get_user_id_by_user_name(user_name)
+    return user_id['id']
