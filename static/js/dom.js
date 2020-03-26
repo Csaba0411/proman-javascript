@@ -3,7 +3,7 @@ import {dataHandler} from "./data_handler.js";
 
 export let dom = {
     init: function () {
-        // This function should run once, when the page is loaded.
+        addBoard();
     },
     loadBoards: function () {
         document.querySelector('#boards').textContent = '';
@@ -21,7 +21,7 @@ export let dom = {
         for (let board of boards) {
             if (board['user_id'] === null || Number(board['user_id']) === Number(localStorage.getItem('userId'))) {
                 boardList += `
-                <section class="board">
+                <section class="board" id="board-${board['id']}">
                 <div class="board-header"><button class="board-title" data-board-id="${board['id']}">${board.title}</button>
                 <button class="board-add add-card" data-board-id="${board['id']}">Add Card</button>
                 <button class="board-add add-status" data-board-id="${board['id']}">Add status</button>
@@ -62,12 +62,11 @@ export let dom = {
         `;
         let boardsContainer = document.querySelector('#boards');
         boardsContainer.insertAdjacentHTML("beforeend", outerHtml);
-        addBoard();
         renameFunction();
         hideShowColumn();
         addColumn();
         deleteBoard();
-        addCard();
+        initAddCardButtons();
         renameColumn();
         renameCards();
         deleteCard();
@@ -150,38 +149,44 @@ let deleteBoard = function () {
 };
 
 
-function addCard() {
+function initAddCardButtons() {
     let addCardButtons = document.getElementsByClassName("add-card");
     for (let addButton of addCardButtons) {
-        addButton.addEventListener('click', function (event) {
-            let boardId = addButton.dataset.boardId;
-            NewCardInsertApi(boardId, addButton, addNewCardHTML);
-            event.preventDefault();
-        })
+        initAddCardButton(addButton);
     }
+}
 
-    function NewCardInsertApi(boardId, addButton, callback) {
+function initAddCardButton(addButton) {
+    let boardId = addButton.dataset.boardId;
+    addButton.addEventListener('click', function (event) {
+        NewCardInsertApi(boardId, addButton, addNewCardHTML);
+        event.preventDefault();
+    })
+}
 
-        fetch(`/save-new-card/${boardId}`)
-            .then(response => response.json())
-            .then(data => callback(data, addButton))
-    }
+function NewCardInsertApi(boardId, addButton, callback) {
 
-    function addNewCardHTML(data, addButton) {
-        let boardId = addButton.dataset.boardId;
-        let allCardContainer = document.getElementsByClassName('column-for-new-cards');
-        let newCard =
-            `<div class="card" draggable="true" data-card-id="${data}">
+    fetch(`/save-new-card/${boardId}`)
+        .then(response => response.json())
+        .then(data => callback(data, addButton))
+}
+
+function addNewCardHTML(data, addButton) {
+    let boardId = addButton.dataset.boardId;
+    let allCardContainer = document.getElementsByClassName('column-for-new-cards');
+    let newCard =
+        `<div class="card" draggable="true" data-card-id="${data}">
                     <div class="card-remove" data-card-id="${data}"><i class="fas fa-trash-alt"></i></div>
                     <div class="card-title" data-card-id="${data}">New Card</div>
                 </div>`;
-        for (let cardContainer of allCardContainer) {
-            if (cardContainer.dataset.boardId === boardId) {
-                cardContainer.insertAdjacentHTML("beforeend", newCard)
-            }
+    for (let cardContainer of allCardContainer) {
+        if (cardContainer.dataset.boardId === boardId) {
+            cardContainer.insertAdjacentHTML("beforeend", newCard)
         }
     }
+    deleteCard();
 }
+
 
 function addBoard() {
     let plusSign = document.querySelector('#plus-sign');
@@ -191,9 +196,10 @@ function addBoard() {
     });
     let privateButton = document.querySelector('#create-private-board');
     if (privateButton) {
+        // privateButton.removeEventListener();
         privateButton.addEventListener('click', function (event) {
             let newBoardName = prompt('Board name: ');
-            addBoardApi(newBoardName, localStorage.getItem('userId'), insertNewBoard)
+            addBoardApi(newBoardName, localStorage.getItem('userId'), insertNewBoard);
         });
     }
 
@@ -206,7 +212,7 @@ function addBoard() {
     function insertNewBoard(data, newBoardName) {
         let boardContainer = document.querySelector('.board-container');
         let board = `
-                <section class="board">
+                <section class="board" id="board-${data['board_id']}">
                 <div class="board-header"><button class="board-title" data-board-id="${data['board_id']}">${newBoardName}</button>
                     <button class="board-add add-card" data-board-id="${data['board_id']}">Add Card</button>
                     <button class="board-add add-status" data-board-id="${data['board_id']}">Add status</button>
@@ -231,7 +237,16 @@ function addBoard() {
         }
         board += `</div>
                    </section>`;
-        boardContainer.insertAdjacentHTML("beforeend", board)
+        boardContainer.insertAdjacentHTML("beforeend", board);
+        renameFunction();
+        hideShowColumn();
+        addColumn();
+        deleteBoard();
+        initAddCardButton(document.querySelector(`#board-${data['board_id']} .add-card`));
+        renameColumn();
+        renameCards();
+        deleteCard();
+        changeStatus();
     }
 }
 
