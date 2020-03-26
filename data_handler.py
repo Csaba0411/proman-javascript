@@ -35,13 +35,13 @@ def adding_registration_data(registration_data):
     persistence.save_registration_data(hashed_password, registration_data["username"], dt)
 
 
-def get_login_data(login_data, cookiedata):
+def get_login_data(login_data, cookie_data):
     login = persistence.get_login_data(login_data['user'])
     if not login:
         return False
     if login_data['user'] == login['name'] and verify_password(login_data['password'], login['password']) is True:
-        cookiedata['username'] = login_data['user']
-        cookiedata['logged_in_id'] = login['id']
+        cookie_data['username'] = login_data['user']
+        cookie_data['logged_in_id'] = login['id']
         return True
     return False
 
@@ -78,11 +78,6 @@ def get_statuses_for_specific_board(board_id):
 
 def get_statuses_from_persistence():
     return persistence.get_statuses
-
-
-def update_with_boardname(old_name, new_name):
-    old_name_id = persistence.get_board_id_by_name(old_name)
-    persistence.update_boardname(old_name_id['id'], new_name)
 
 
 def add_new_status(board_id, status_name):
