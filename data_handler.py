@@ -63,13 +63,17 @@ def get_boards():
         board['status'] = get_statuses_for_specific_board(board['id'])
         for stat in board['status']:
             board[stat] = [(card['card'], card['card_id']) for card in cards if card['status'] == stat]
-
     return all_board
 
 
 def get_statuses_for_specific_board(board_id):
-    return [persistence.get_status_title_by_id(card_status['status_id'])['title'] for card_status
-            in persistence.get_all_cards_status_id_for_a_board(board_id)]
+    status_titles = []
+    cards_for_this_board = persistence.get_all_cards_status_id_for_a_board(board_id)
+    for card in cards_for_this_board:
+        card_title = persistence.get_status_title_by_id(card['status_id'])
+        if card_title['title'] not in status_titles:
+            status_titles.append(card_title['title'])
+    return status_titles
 
 
 def get_statuses_from_persistence():
